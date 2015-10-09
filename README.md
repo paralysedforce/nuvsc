@@ -12,8 +12,8 @@ Travel time warning
 security check
 place on web
 user login and save functionality
+Make the calendar event start and stop on term dates instead of infinitely repeating
 export to google calendar
 search by distro field
 search by instructor field
 search by given criteria: subject(drop down/any), catalog_num(> or < or = or any), meeting days(checkboxes (required)), start time(drop down/any)
-Make the calendar event start and stop on term dates instead of infinitely repeating
