@@ -17,5 +17,5 @@ TODO:
 <ol>export to google calendar</ol>
 <ol>search by distro field</ol>
 <ol>search by instructor field</ol>
-<ol>search by given criteria: subject(drop down/any), catalog_num(> or < or = or any), meeting days(checkboxes (required)), start time(drop down/any)</ol>
+<ol>search by given criteria: subject(drop down/any), catalog_num(> or < or = or any), meeting days(checkboxes (required)), start time(drop down\/any)</ol>
 </li>
