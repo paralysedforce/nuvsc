@@ -96,21 +96,21 @@ def update_subjects():
                     db.commit()
 
 def update_courses():
-    # Get a list of old course ids that are already in db
+    # Get a list of old course names that are already in db
     old_names = [x['name'] for x in query_db("SELECT name FROM courses ORDER BY id ASC")]
-    # Get a list of new courses from the northwestern api
-    new_courses = []
     # Make sure we are getting courses for every subject and the most recent term
     update_subjects()
-    subject_symbols = query_db("SELECT symbol FROM subjects")
+    subject_symbols = [x['symbol'] for x in query_db("SELECT symbol FROM subjects")]
 
     update_terms()
     term_id = query_db("SELECT MAX(id) FROM terms")[0]['id']
 
+    # Get a list of new courses from the northwestern api
+    new_courses = []
     for subj_symb in subject_symbols:
-        courses = client.courses(term = term_id, subject = str(subj_symb[0]))
+        courses = client.courses(term = term_id, subject = str(subj_symb))
         for course in courses:
-            new_courses.append({'name':str(new_course['subject']) + " " + str(new_course['catalog_num']) + " " + str(new_course['title']),
+            new_courses.append({'name':str(course['subject']) + " " + str(course['catalog_num']) + " " + str(course['title']),
                                 'term':course['term'],
                                 'subject':course['subject']})
 
@@ -121,88 +121,138 @@ def update_courses():
     # If they're not the same, add the new courses to old
     if new_names != old_names:
         for new_course in new_courses:
-            if new_course['id'] not in old_ids:
+            if new_course['name'] not in old_names:
                     vals = [new_course['name'], str(new_course['term']), str(new_course['subject'])]
-                    db = get_db()
-                    db.execute("INSERT INTO courses VALUES (?, ?, ?)", vals)
-                    db.commit()
+                    try:
+                        db = get_db()
+                        db.execute("INSERT INTO courses VALUES (?, ?, ?)", vals)
+                        db.commit()
+                    except sqlite3.IntegrityError:
+                        pass
 
 def update_sections():
-    update_courses()
-    #TODO
+    # Get a list of old section ids
+    old_ids = [x['id'] for x in query_db("SELECT id FROM sections ORDER BY id ASC")]
+
+    update_subjects()
+    subject_symbols = [x['symbol'] for x in query_db("SELECT symbol FROM subjects")]
+
+    update_terms()
+    term_id = query_db("SELECT MAX(id) FROM terms")[0]['id']
+
+    new_sections = []
+    for sub_symb in subject_symbols:
+        sections = client.courses(term = term_id, subject = str(subj_symbol))
+        for section in sections:
+            new_sections.append(
+                {'id':int(section['id']),
+                 'catalog_num':str(section['catalog_num']),
+                 'title':str(section['title']),
+                 'dow':str(convertDaysToDOW(section['meeting_days'])),
+                 'start_time':str(section['start_time']),
+                 'end_time':str(section['end_time']),
+                 'instructor':str(section['instructor']),
+                 'section':str(section['section']),
+                 'course':str(section['course'])
+                }
+            )
+
+    new_ids = sorted([x['id'] for x in new_courses])
+    if new_ids != old_ids:
+        for new_section in new_sections:
+            if new_section['id'] not in old_ids:
+                    vals = [new_section['id'], new_section['subject'],
+                            new_section['catalog_num'], new_section['title'],
+                            new_section['dow'], new_section['start_time'],
+                            new_section['end_time'], new_section['instructor'],
+                            new_section['section'], new_section['course']]
+                    db = get_db()
+                    db.execute("INSERT INTO sections VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", vals)
+                    db.commit()
 
 
 @app.route('/')
 def index():
-    terms = query_db("SELECT id, name FROM terms ORDER BY id DESC")
     schools = query_db("SELECT symbol, name FROM schools")
-    #TODO: update_courses()
-    return render_template('index.html', terms = terms, schools = schools)
+    return render_template('index.html', schools = schools)
 
-@app.route('/courses/<term_id>/<subject_symbol>')
-def courses(term_id, subject_symbol):
-    term_name = str(query_db("SELECT name FROM terms WHERE id = ?",
-                             [int(term_id)],
-                             True)[0])
-    vals = [term_name, subject_symbol]
-    all_courses = query_db("SELECT id, "
-                                  "title, "
-                                  "term, "
-                                  "subject, "
-                                  "catalog_num, "
-                                  "meeting_days, "
-                                  "start_time, "
-                                  "end_time "
-                                  "FROM courses WHERE term = ? AND subject = ?",
-                            vals)
-    all_courses_json = [{'id':x['id'],
-                         'title':x['title'],
-                         'subject':x['subject'],
-                         'catalog_num':x['catalog_num'],
-                         'meeting_days':x['meeting_days'],
-                         'start_time':x['start_time'],
-                         'end_time':x['end_time']} for x in all_courses]
-    return json.dumps(all_courses_json)
-
-@app.route('/course/<int:course_id>')
-def course(course_id):
-    course = query_db("SELECT id, "
-                             "title, "
-                             "term, "
-                             "subject, "
-                             "catalog_num, "
-                             "meeting_days, "
-                             "start_time, "
-                             "end_time "
-                             "FROM courses WHERE id = ?",
-                      [int(course_id)],
-                      True)
-    course_json = [{'id':course['id'],
-                    'title':course['title'],
-                    'subject':course['subject'],
-                    'catalog_num':course['catalog_num'],
-                    'meeting_days':course['meeting_days'],
-                    'start_time':course['start_time'],
-                    'end_time':course['end_time']}]
-    return json.dumps(course_json, indent = 4)
-
-@app.route('/dept/<school_symbol>')
-def dept(school_symbol):
+@app.route('/subjects/<school_symbol>')
+def subjects(school_symbol):
     subjects = query_db("SELECT symbol, name FROM subjects WHERE school = ?", [str(school_symbol)])
     subjects_json = [{'symbol':x['symbol'], 'name':x['name']} for x in subjects]
     return json.dumps(subjects_json)
 
-@app.route('/all_courses')
-def all_courses():
-    courses_list = []
-    courses = query_db("SELECT id, title, term, subject, catalog_num, "
-                       "meeting_days, start_time, end_time, instructor, section "
-                       "FROM courses")
-    for course in courses:
+@app.route('/courses/<subject_symbol>')
+def courses(subject_symbol):
+    term_name = query_db("SELECT MAX(id), name FROM terms")[0]['name']
+    vals = [term_name, subject_symbol]
+    courses = query_db("SELECT name, subject, "
+                       "FROM courses WHERE term = ? AND subject = ?",
+                       vals)
+    courses_json = [{'name':x['name'],
+                     'subject':x['subject']} for x in courses]
+    return json.dumps(courses_json)
+
+@app.route('/sections/<course_name>')
+def sections(course_name):
+    term_name = query_db("SELECT MAX(id), name FROM terms")[0]['name']
+    vals = [term_name, course_name]
+    sections = query_db("SELECT id, catalog_num, title, dow, start_time, end_time, instructor, section, course FROM sections WHERE term = ? AND course = ?", vals)
+    sections_json = [
+                        {'id':x['id'],
+                         'catalog_num':x['catalog_num'],
+                         'title':x['title'],
+                         'dow':x['dow'],
+                         'start_time':x['start_time'],
+                         'end_time':x['end_time'],
+                         'instructor':x['instructor'],
+                         'section':x['section'],
+                         'course':x['course']
+                        } for x in sections
+                    ]
+    return json.dumps(sections_json)
+
+@app.route('/section/<int:section_id>')
+def section(section_di):
+    section = query_db("SELECT id, "
+                       "subject, "
+                       "catalog_num, "
+                       "title, "
+                       "dow, "
+                       "start_time, "
+                       "end_time, "
+                       "instructor, "
+                       "section "
+                       "course " 
+                       "FROM courses WHERE id = ?",
+                       [int(course_id)])[0]
+    section_json = [
+                        {'id':section['id'],
+                         'subject':section['subject'],
+                         'catalog_num':section['catalog_num'],
+                         'title':section['title'],
+                         'dow':section['dow'],
+                         'start_time':section['start_time'],
+                         'end_time':section['end_time'],
+                         'instructor':section['instructor'],
+                         'section':section['section'],
+                         'course':section['course']
+                        }
+                    ]
+    return json.dumps(section_json)
+
+@app.route('/all_sections')
+def all_sections():
+    sections_list = []
+    sections = query_db("SELECT id, subject, catalog_numb, title, dow, "
+                        "start_time, end_time, instructor, section, course "
+                        "FROM courses"
+                        )
+    for section in sections:
         # Account for unscheduled courses
         meeting_str = ""
-        if course['meeting_days'] != '[]':
-            meeting_days = course['meeting_days'][1:len(course['meeting_days']) - 1].split(",")
+        if section['dow'] != '[]':
+            meeting_days = section['dow'][1:len(section['dow']) - 1].split(",")
             for day in meeting_days:
                 if day == '1' or day == ' 1': meeting_str += "M"
                 elif day == '2' or day == ' 2': meeting_str += "Tu"
@@ -210,23 +260,27 @@ def all_courses():
                 elif day == '4' or day == ' 4': meeting_str += "Th"
                 elif day == '5' or day == ' 5': meeting_str += "F"
 
-        course_time = ""
-        if course['start_time'] != 'None':
-            course_time = course['start_time'] + "-" + course['end_time']
+        section_time  = ""
+        if section['start_time'] != 'None':
+            section_time = section['start_time'] + "-" + section['end_time']
 
-        courses_list.append({'value':course['title'],
-                             'desc':meeting_str + " " + course_time,
-                             'label':"<b>" + course['subject']+ " " + course['catalog_num'] + " " + course['title'] + "</b>",
-                             'id':course['id'],
-                             'subject':course['subject'],
-                             'catalog_num':course['catalog_num'],
-                             'title':course['title'],
-                             'start_time':course['start_time'],
-                             'end_time':course['end_time'],
-                             'dow_list':course['meeting_days'],
-                             'instructor':course['instructor'],
-                             'section':course['section']})
-    return json.dumps(courses_list)
+        sections_list.append(
+                                {'value':section['title'],
+                                 'desc':meeting_str + " " + course_time,
+                                 'label':"<b>" + section['subject']+ " " + section['catalog_num'] + " " + section['title'] + "</b>",
+                                 'id':section['id'],
+                                 'subject':section['subject'],
+                                 'catalog_num':section['catalog_num'],
+                                 'title':section['title'],
+                                 'dow':section['dow'],
+                                 'start_time':section['start_time'],
+                                 'end_time':section['end_time'],
+                                 'instructor':section['instructor'],
+                                 'section':section['section'],
+                                 'course':section['course']
+                                }
+                            )
+    return json.dumps(sections_list)
 
 if __name__ == '__main__':
     app.run(debug = True)

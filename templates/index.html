@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+
+<link rel=stylesheet type=text/css href="{{url_for('static', filename='style.css')}}">
+<link rel=stylesheet type=text/css href="{{url_for('static', filename='fullcalendar/fullcalendar.css')}}">
+<link rel="stylesheet" href="{{url_for('static', filename='jquery-ui.css')}}">
+
+<head>
+    <title>Northwestern Visual Shopping Cart</title>
+</head>
+
+<body>
+    <h3>Visual Course Finder</h3>
+    <div id='visual_course_finder'>
+        <div class='school_box'><a id="{{schools[0][0]}}" onclick="show_subjects(this)" href='javascript:;'>{{schools[0][1]}}</a></div>
+        <div class='school_box'><a id="{{schools[1][0]}}" onclick="show_subjects(this)" href='javascript:;'>{{schools[1][1]}}</a></div>
+        <div class='school_box'><a id="{{schools[2][0]}}" onclick="show_subjects(this)" href='javascript:;'>{{schools[2][1]}}</a></div>
+        <div class='school_box'><a id="{{schools[3][0]}}" onclick="show_subjects(this)" href='javascript:;'>{{schools[3][1]}}</a></div>
+        <div class='school_box'><a id="{{schools[4][0]}}" onclick="show_subjects(this)" href='javascript:;'>{{schools[4][1]}}</a></div>
+        <div class='school_box'><a id="{{schools[5][0]}}" onclick="show_subjects(this)" href='javascript:;'>{{schools[5][1]}}</a></div>
+        <div class='school_box'><a id="{{schools[6][0]}}" onclick="show_subjects(this)" href='javascript:;'>{{schools[6][1]}}</a></div>
+        <div class='school_box'><a id="{{schools[7][0]}}" onclick="show_subjects(this)" href='javascript:;'>{{schools[7][1]}}</a></div>
+        <div class='school_box'><a id="{{schools[8][0]}}" onclick="show_subjects(this)" href='javascript:;'>{{schools[8][1]}}</a></div>
+        <div class='school_box'><a id="{{schools[9][0]}}" onclick="show_subjects(this)" href='javascript:;'>{{schools[9][1]}}</a></div>
+        <div class='school_box'><a id="{{schools[10][0]}}" onclick="show_subjects(this)" href='javascript:;'>{{schools[10][1]}}</a></div>
+    </div>
+
+    <div id="search">
+        <h3>Search</h3>
+        <input id="autocomplete">
+    </div>
+
+    <div id="cart">
+        <h3>Shopping Cart</h3>
+    </div>
+
+    <div id="calendar">
+    </div>
+    
+    <div id="unscheduled">
+        <h4>Unscheduled Courses</h4>
+    </div>
+
+    <div id="dialog"></div>
+</body>
+
+<script type='text/javascript' src='{{url_for('static', filename='jquery.js')}}'></script>
+<script src="{{url_for('static', filename='jquery-ui/jquery-ui.js')}}"></script>
+<script type='text/javascript' src='{{url_for('static', filename='fullcalendar/lib/moment.min.js')}}'></script>
+<script type='text/javascript' src='{{url_for('static', filename='fullcalendar/fullcalendar.js')}}'></script>
+<script type='text/javascript' src='{{url_for('static', filename='fullcalendar/gcal.js')}}'></script>
+<script type="text/javascript" src="{{url_for('static', filename='script.js')}}"></script>
+
+</html>

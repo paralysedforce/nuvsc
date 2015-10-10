@@ -27,12 +27,13 @@ CREATE TABLE courses (
 
 CREATE TABLE sections (
     id INTEGER PRIMARY KEY,
-    subject TEXT,
     catalog_num TEXT,
     title TEXT,
     dow TEXT,
     start_time TEXT,
     end_time TEXT,
     instructor TEXT,
-    section TEXT
+    section TEXT,
+    course TEXT,
+    FOREIGN KEY (course) REFERENCES courses (name)
 );
