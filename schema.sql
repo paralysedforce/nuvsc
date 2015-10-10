@@ -1,3 +1,4 @@
+DROP TABLE if EXISTS terms;
 CREATE TABLE terms (
     id INTEGER PRIMARY KEY,
     name TEXT,
@@ -5,11 +6,13 @@ CREATE TABLE terms (
     end_date TEXT
 );
 
+DROP TABLE if EXISTS schools;
 CREATE TABLE schools (
     symbol TEXT PRIMARY KEY,
     name TEXT
 );
 
+DROP TABLE if EXISTS subjects;
 CREATE TABLE subjects (
     symbol TEXT,
     name TEXT,
@@ -18,6 +21,7 @@ CREATE TABLE subjects (
     FOREIGN KEY (school) REFERENCES schools (symbol)
 );
 
+DROP TABLE if EXISTS courses;
 CREATE TABLE courses (
     name TEXT PRIMARY KEY,
     term TEXT,
@@ -25,6 +29,7 @@ CREATE TABLE courses (
     FOREIGN KEY (subject) REFERENCES subjects (symbol)
 );
 
+DROP TABLE if EXISTS sections;
 CREATE TABLE sections (
     id INTEGER PRIMARY KEY,
     catalog_num TEXT,

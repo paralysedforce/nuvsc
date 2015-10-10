@@ -77,11 +77,11 @@ function show_courses(input){
             for (var i = 0; i < courses_list.length; i++){
                 var course = courses_list[i];
                 var course_link = document.createElement('a');
-                course_link.setAttribute('id', course['id']);
+                course_link.setAttribute('id', course['name']);
                 course_link.setAttribute('class', 'course_link');
                 course_link.setAttribute('onclick', "show_sections(this)");
                 course_link.setAttribute('href', 'javascript:;');
-                course_link.innerHTML = "-- " + course['catalog_num'] + " " + course['title'];
+                course_link.innerHTML = "-- " + course['name'];
                 var subjects = document.getElementsByClassName("subject_box");
                 for (var j = 0; j < subjects.length; j++){
                     // Make sure it's being appended to the subject, not the school 
@@ -98,6 +98,8 @@ function show_courses(input){
 }
 
 function show_sections(input){
+    $('#dialog').dialog("open");
+
     var xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function(){
         if (xhttp.readyState == 4 && xhttp.status == 200){
@@ -105,7 +107,8 @@ function show_sections(input){
             text_data = xhttp.responseText;
             sections_list = parseTextList(text_data);
             // clear dialog div
-            var overlay = document.getElementById('dialogue');
+            //TODO the jquery ui package puts other things in dialog div so this won't work
+            var overlay = document.getElementById('dialog');
             while (overlay.firstChild) {
                 overlay.removeChild(overlay.removeChild);
             }
@@ -116,7 +119,7 @@ function show_sections(input){
                 section_link.setAttribute('class', 'section_link');
                 section_link.setAttribute('onclick', "add_section(this.id)");
                 section_link.setAttribute('href', 'javascript:;');
-                section_link.innerHTML = "Section " + section['section'] + "  " + section['dow'] + " " + section['start_time'] + "-" + section['end_time'], + "  " + section['instructor'};
+                section_link.innerHTML = "Section " + section['section'] + "  " + section['dow'] + " " + section['start_time'] + "-" + section['end_time'], + "  " + section['instructor'];
                 // insert html section links to dialog div
                 document.getElementById('dialog').appendChild(section_link);
                 document.getElementById('dialog').setAttribute("title", section['course']);
@@ -205,13 +208,8 @@ function back(input){
 $(document).ready(function(){
     // Load section dialog
     $('#dialog').dialog({
-        autoOpen: false;
-        modal: true;
-        buttons: {
-            Back: function(){
-                $(this).dialog("close");
-            }
-        }
+        autoOpen: false,
+        modal: true
     });
 
     // Load calendar

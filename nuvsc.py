@@ -6,12 +6,11 @@ from nuapiclient import NorthwesternAPIClient
 import nuapiclient_key as api_key
 
 
-def convertDaysToDOW(course):
-    meeting_days = str(course['meeting_days'])
-    if meeting_days == None:
+def convertDaysToDOW(section_str):
+    if section_str == None:
         return []
-    days = [meeting_days[x:x + 2] for x in range(0, 
-        len(meeting_days), 2)]
+    days = [section_str[x:x + 2] for x in range(0, 
+        len(section_str), 2)]
     dow_list = []
     for day in days:
         if day == 'Mo': dow_list.append(1)
@@ -79,8 +78,8 @@ def initialize_schools():
 def update_subjects():
     school_symbols = [x['symbol'] for x in query_db("SELECT symbol FROM schools")]
 
-    update_terms()
-    term_id = query_db("SELECT MAX(id) FROM terms")[0]['id']
+    # update_terms()
+    term_id = query_db("SELECT MAX(id) FROM terms")[0][0]
     # For each school
     for school_symb in school_symbols:
         old_symbols = [x['symbol'] for x in query_db("SELECT symbol FROM subjects WHERE school = ? ORDER BY symbol ASC", [school_symb])]
@@ -97,13 +96,13 @@ def update_subjects():
 
 def update_courses():
     # Get a list of old course names that are already in db
-    old_names = [x['name'] for x in query_db("SELECT name FROM courses ORDER BY id ASC")]
+    old_names = [x['name'] for x in query_db("SELECT name FROM courses ORDER BY name ASC")]
     # Make sure we are getting courses for every subject and the most recent term
-    update_subjects()
+    # update_subjects()
     subject_symbols = [x['symbol'] for x in query_db("SELECT symbol FROM subjects")]
 
-    update_terms()
-    term_id = query_db("SELECT MAX(id) FROM terms")[0]['id']
+    # update_terms()
+    term_id = query_db("SELECT MAX(id) FROM terms")[0][0]
 
     # Get a list of new courses from the northwestern api
     new_courses = []
@@ -134,15 +133,15 @@ def update_sections():
     # Get a list of old section ids
     old_ids = [x['id'] for x in query_db("SELECT id FROM sections ORDER BY id ASC")]
 
-    update_subjects()
+    # update_subjects()
     subject_symbols = [x['symbol'] for x in query_db("SELECT symbol FROM subjects")]
 
-    update_terms()
-    term_id = query_db("SELECT MAX(id) FROM terms")[0]['id']
+    # update_terms()
+    term_id = query_db("SELECT MAX(id) FROM terms")[0][0]
 
     new_sections = []
     for sub_symb in subject_symbols:
-        sections = client.courses(term = term_id, subject = str(subj_symbol))
+        sections = client.courses(term = term_id, subject = str(sub_symb))
         for section in sections:
             new_sections.append(
                 {'id':int(section['id']),
@@ -153,22 +152,29 @@ def update_sections():
                  'end_time':str(section['end_time']),
                  'instructor':str(section['instructor']),
                  'section':str(section['section']),
-                 'course':str(section['course'])
+                 'course':str(section['subject'] + " " + section['catalog_num'] + " " + section['title'])
                 }
             )
 
-    new_ids = sorted([x['id'] for x in new_courses])
+    new_ids = sorted([x['id'] for x in new_sections])
     if new_ids != old_ids:
         for new_section in new_sections:
             if new_section['id'] not in old_ids:
-                    vals = [new_section['id'], new_section['subject'],
-                            new_section['catalog_num'], new_section['title'],
-                            new_section['dow'], new_section['start_time'],
-                            new_section['end_time'], new_section['instructor'],
-                            new_section['section'], new_section['course']]
-                    db = get_db()
-                    db.execute("INSERT INTO sections VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", vals)
-                    db.commit()
+                    vals = [new_section['id'],
+                            new_section['catalog_num'],
+                            new_section['title'],
+                            new_section['dow'],
+                            new_section['start_time'],
+                            new_section['end_time'],
+                            new_section['instructor'],
+                            new_section['section'],
+                            new_section['course']]
+                    try:
+                        db = get_db()
+                        db.execute("INSERT INTO sections VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)", vals)
+                        db.commit()
+                    except sqlite3.IntegrityError:
+                        print new_section['id']
 
 
 @app.route('/')
@@ -186,7 +192,7 @@ def subjects(school_symbol):
 def courses(subject_symbol):
     term_name = query_db("SELECT MAX(id), name FROM terms")[0]['name']
     vals = [term_name, subject_symbol]
-    courses = query_db("SELECT name, subject, "
+    courses = query_db("SELECT name, subject "
                        "FROM courses WHERE term = ? AND subject = ?",
                        vals)
     courses_json = [{'name':x['name'],
@@ -244,9 +250,9 @@ def section(section_di):
 @app.route('/all_sections')
 def all_sections():
     sections_list = []
-    sections = query_db("SELECT id, subject, catalog_numb, title, dow, "
+    sections = query_db("SELECT id, catalog_num, title, dow, "
                         "start_time, end_time, instructor, section, course "
-                        "FROM courses"
+                        "FROM sections"
                         )
     for section in sections:
         # Account for unscheduled courses
@@ -266,10 +272,9 @@ def all_sections():
 
         sections_list.append(
                                 {'value':section['title'],
-                                 'desc':meeting_str + " " + course_time,
-                                 'label':"<b>" + section['subject']+ " " + section['catalog_num'] + " " + section['title'] + "</b>",
+                                 'desc':meeting_str + " " + section_time,
+                                 'label':"<b>" + section['course'] + "</b>",
                                  'id':section['id'],
-                                 'subject':section['subject'],
                                  'catalog_num':section['catalog_num'],
                                  'title':section['title'],
                                  'dow':section['dow'],
