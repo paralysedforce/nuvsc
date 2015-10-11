@@ -3,9 +3,11 @@
 <b>TODO:</b>
 
 <ol>
-<ul>Make calendar events clickable - contains details</ul>
+<ul>Fix bug that causes page to crash when overlays with multiple sections are loaded (most like has something to do with the while loop)</ul>
 <ul>Remove functionality from calendar event itself</ul>
+<ul>Add start and end date functionality</ul>
 <ul>graphics</ul>
+<ul>Add room and bulding data field in sections</ul>
 <ul>security check</ul>
 <ul>place on web</ul>
 <ul>user login and save functionality</ul>

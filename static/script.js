@@ -112,22 +112,29 @@ function show_sections(input){
             while (overlay_ul.firstChild){
                 overlay_ul.removeChild(overlay_ul.firstChild);
             }
-            //console.log(sections_list[0]['course']);
-            //Why doesn't this work? TODO
+            // Set overlay title
             document.getElementById('ui-id-1').innerHTML = sections_list[0]['course'];
-            // turn into into html section links
+            // turn into html section links
             for (var i = 0; i < sections_list.length; i++){
                 var section = sections_list[i];
                 var section_link = document.createElement('a');
                 section_link.setAttribute('id', section['id']);
                 section_link.setAttribute('class', 'section_link');
-                section_link.setAttribute('onclick', "add_section(this.id)");
+                section_link.setAttribute('onclick', "add_section_visual(this.id)");
                 section_link.setAttribute('href', 'javascript:;');
                 var times = section['start_time'] + "-" + section['end_time'];
                 if (section['start_time'] == 'None'){
                     times = "";
                 }
                 section_link.innerHTML = "Section " + section['section'] + "  " + section['dow'] + " " + times + "  " + section['instructor'];
+                // Check if course is aleady in cart
+                var sections_in_cart = document.getElementById("cart").children;
+                for (var i = 0; i < sections_in_cart.length; i++){
+                    // If yes, make link red
+                    if (sections_in_cart[i].id == section['id'] && sections_in_cart[i].getAttribute('class') == "section_cart"){
+                        section_link.style.color = 'red';
+                    }
+                }
 
                 var li = document.createElement('li');
                 li.setAttribute('id', section['id'] + '_li');
@@ -141,6 +148,14 @@ function show_sections(input){
     }
     xhttp.open("GET", "/sections/" + input.id, true);
     xhttp.send();
+}
+
+function add_section_visual(id){
+    var section_link = document.getElementById(id);
+    if (section_link.getAttribute('class') == 'section_link'){
+        section_link.style.color = 'red';
+    }
+    add_section(id);
 }
 
 function add_section(id){
@@ -164,7 +179,7 @@ function add_section(id){
             // Populate div with content
             var section = parseTextList(xhttp.responseText)[0];
             //TODO Add instructor (and description?)
-            section_data.innerHTML = "<p>" + section['course'] + "</p><a onclick='remove_course(this.parentElement)' href='javascript:;'>Remove</a>"
+            section_data.innerHTML = "<p>" + section['course'] + "</p><a onclick='remove_course(this.parentElement.id)' href='javascript:;'>Remove</a>"
             ;
             // Append the course
             document.getElementById("cart").appendChild(section_data);
@@ -183,7 +198,9 @@ function add_section(id){
                     //TODO add start and end date functionality
                     start: "2015-10-09" + 'T' + section['start_time'] + ':00',
                     end: "2016-10-09" + 'T' + section['end_time'] + ':00',
-                    dow: section['dow']
+                    dow: section['dow'],
+                    section: section['section'],
+                    instructor: section['instructor']
                 }
                 $('#calendar').fullCalendar('renderEvent', section_event, 'stick');
             }
@@ -193,15 +210,20 @@ function add_section(id){
     xhttp.send();
 }
 
-function remove_course(input){
+function remove_course(id){
     // Remove event from calendar
-    $('#calendar').fullCalendar('removeEvents', idOrFilter = input.id);
+    $('#calendar').fullCalendar('removeEvents', idOrFilter = id);
     // Remove event from cart
-    document.getElementById("cart").removeChild(input);
+    var children = document.getElementById("cart").children;
+    for (var i = 0; i < children.length; i++){
+        if (children[i].id == id){
+            document.getElementById("cart").removeChild(children[i]);
+        }
+    }
     // If the event is unscheduled it, remove it from the unscheduled section
     var unscheduled_children = document.getElementById("unscheduled").children;
     for (var i = 0; i < unscheduled_children.length; i++){
-        if (unscheduled_children[i].getAttribute('id') == input.getAttribute('id')){
+        if (unscheduled_children[i].getAttribute('id') == id){
             unscheduled_children[i].remove();
         }
     }
@@ -238,6 +260,18 @@ $(document).ready(function(){
         allDaySlot: false,
         events: {
             googleCalendarId: '57bcm4ch79o7820fm5d66e09j8@group.calendar.google.com',
+        },
+        eventRender: function(event, element){
+            element.qtip({
+                content: "<b>" + event.title + "</b><br>Section " + event.section + "<br>" + event.instructor + "<br><a onclick='remove_course(" + event.id + ")' href='javascript:;'>Remove</a>",
+                show: {
+                    solo: true
+                },
+                hide: {
+                    fixed: true,
+                    delay: 300
+                }
+            });
         }
     });
 
