@@ -20,6 +20,17 @@ def convertDaysToDOW(section_str):
         elif day == 'Fr': dow_list.append(5)
     return dow_list
     
+def convertDOWToDays(dow):
+    meeting_str = ""
+    meeting_days = dow[1:len(dow) - 1].split(",")
+    for day in meeting_days:
+        if day == '1' or day == ' 1': meeting_str += "M"
+        elif day == '2' or day == ' 2': meeting_str += "Tu"
+        elif day == '3' or day == ' 3': meeting_str += "W"
+        elif day == '4' or day == ' 4': meeting_str += "Th"
+        elif day == '5' or day == ' 5': meeting_str += "F"
+    return meeting_str
+
 
 DATABASE = 'cache.db'
 
@@ -78,7 +89,6 @@ def initialize_schools():
 def update_subjects():
     school_symbols = [x['symbol'] for x in query_db("SELECT symbol FROM schools")]
 
-    # update_terms()
     term_id = query_db("SELECT MAX(id) FROM terms")[0][0]
     # For each school
     for school_symb in school_symbols:
@@ -98,10 +108,8 @@ def update_courses():
     # Get a list of old course names that are already in db
     old_names = [x['name'] for x in query_db("SELECT name FROM courses ORDER BY name ASC")]
     # Make sure we are getting courses for every subject and the most recent term
-    # update_subjects()
     subject_symbols = [x['symbol'] for x in query_db("SELECT symbol FROM subjects")]
 
-    # update_terms()
     term_id = query_db("SELECT MAX(id) FROM terms")[0][0]
 
     # Get a list of new courses from the northwestern api
@@ -133,10 +141,8 @@ def update_sections():
     # Get a list of old section ids
     old_ids = [x['id'] for x in query_db("SELECT id FROM sections ORDER BY id ASC")]
 
-    # update_subjects()
     subject_symbols = [x['symbol'] for x in query_db("SELECT symbol FROM subjects")]
 
-    # update_terms()
     term_id = query_db("SELECT MAX(id) FROM terms")[0][0]
 
     new_sections = []
@@ -201,14 +207,12 @@ def courses(subject_symbol):
 
 @app.route('/sections/<course_name>')
 def sections(course_name):
-    term_name = query_db("SELECT MAX(id), name FROM terms")[0]['name']
-    vals = [term_name, course_name]
-    sections = query_db("SELECT id, catalog_num, title, dow, start_time, end_time, instructor, section, course FROM sections WHERE term = ? AND course = ?", vals)
+    sections = query_db("SELECT id, catalog_num, title, dow, start_time, end_time, instructor, section, course FROM sections WHERE course = ?", [course_name])
     sections_json = [
                         {'id':x['id'],
                          'catalog_num':x['catalog_num'],
                          'title':x['title'],
-                         'dow':x['dow'],
+                         'dow':convertDOWToDays(x['dow']),
                          'start_time':x['start_time'],
                          'end_time':x['end_time'],
                          'instructor':x['instructor'],
@@ -219,22 +223,20 @@ def sections(course_name):
     return json.dumps(sections_json)
 
 @app.route('/section/<int:section_id>')
-def section(section_di):
+def section(section_id):
     section = query_db("SELECT id, "
-                       "subject, "
                        "catalog_num, "
                        "title, "
                        "dow, "
                        "start_time, "
                        "end_time, "
                        "instructor, "
-                       "section "
+                       "section, "
                        "course " 
-                       "FROM courses WHERE id = ?",
-                       [int(course_id)])[0]
+                       "FROM sections WHERE id = ?",
+                       [int(section_id)])[0]
     section_json = [
                         {'id':section['id'],
-                         'subject':section['subject'],
                          'catalog_num':section['catalog_num'],
                          'title':section['title'],
                          'dow':section['dow'],
@@ -256,15 +258,8 @@ def all_sections():
                         )
     for section in sections:
         # Account for unscheduled courses
-        meeting_str = ""
-        if section['dow'] != '[]':
-            meeting_days = section['dow'][1:len(section['dow']) - 1].split(",")
-            for day in meeting_days:
-                if day == '1' or day == ' 1': meeting_str += "M"
-                elif day == '2' or day == ' 2': meeting_str += "Tu"
-                elif day == '3' or day == ' 3': meeting_str += "W"
-                elif day == '4' or day == ' 4': meeting_str += "Th"
-                elif day == '5' or day == ' 5': meeting_str += "F"
+        meeting_stry = ''
+        if section['dow'] != '[]': meeting_str = convertDOWToDays(section['dow'])
 
         section_time  = ""
         if section['start_time'] != 'None':

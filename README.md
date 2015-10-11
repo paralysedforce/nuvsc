@@ -3,16 +3,14 @@
 <b>TODO:</b>
 
 <ol>
-<ul>Make it so that when you click a course link, sections show instead of immediately adding the course (with each section having instructor, etc other info)</ul>
-<ul>Change how add_courses work</ul>
 <ul>Make calendar events clickable - contains details</ul>
 <ul>Remove functionality from calendar event itself</ul>
 <ul>graphics</ul>
-<ul>calendar conflict course culor</ul>
-<ul>Travel time warning</ul>
 <ul>security check</ul>
 <ul>place on web</ul>
 <ul>user login and save functionality</ul>
+<ul>calendar conflict course color</ul>
+<ul>Travel time warning</ul>
 <ul>Make the calendar event start and stop on term dates instead of infinitely repeating</ul>
 <ul>export to google calendar</ul>
 <ul>search by distro field</ul>

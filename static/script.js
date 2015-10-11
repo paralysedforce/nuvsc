@@ -107,33 +107,47 @@ function show_sections(input){
             text_data = xhttp.responseText;
             sections_list = parseTextList(text_data);
             // clear dialog div
-            //TODO the jquery ui package puts other things in dialog div so this won't work
-            var overlay = document.getElementById('dialog');
-            while (overlay.firstChild) {
-                overlay.removeChild(overlay.removeChild);
+            var overlay_ul = document.getElementById('dialog_ul');
+            var overlay_children = overlay_ul.children;
+            while (overlay_ul.firstChild){
+                overlay_ul.removeChild(overlay_ul.firstChild);
             }
+            //console.log(sections_list[0]['course']);
+            //Why doesn't this work? TODO
+            document.getElementById('ui-id-1').innerHTML = sections_list[0]['course'];
             // turn into into html section links
             for (var i = 0; i < sections_list.length; i++){
                 var section = sections_list[i];
                 var section_link = document.createElement('a');
+                section_link.setAttribute('id', section['id']);
                 section_link.setAttribute('class', 'section_link');
                 section_link.setAttribute('onclick', "add_section(this.id)");
                 section_link.setAttribute('href', 'javascript:;');
-                section_link.innerHTML = "Section " + section['section'] + "  " + section['dow'] + " " + section['start_time'] + "-" + section['end_time'], + "  " + section['instructor'];
+                var times = section['start_time'] + "-" + section['end_time'];
+                if (section['start_time'] == 'None'){
+                    times = "";
+                }
+                section_link.innerHTML = "Section " + section['section'] + "  " + section['dow'] + " " + times + "  " + section['instructor'];
+
+                var li = document.createElement('li');
+                li.setAttribute('id', section['id'] + '_li');
+                li.setAttribute('class', 'section_li');
+
                 // insert html section links to dialog div
-                document.getElementById('dialog').appendChild(section_link);
-                document.getElementById('dialog').setAttribute("title", section['course']);
+                li.appendChild(section_link);
+                document.getElementById('dialog_ul').appendChild(li);
             }
         }
     }
+    xhttp.open("GET", "/sections/" + input.id, true);
+    xhttp.send();
 }
-    
 
 function add_section(id){
     // Check if course is aleady in cart
     var sections_in_cart = document.getElementById("cart").children;
     for (var i = 0; i < sections_in_cart.length; i++){
-        if (sections_in_cart[i].id == id){
+        if (sections_in_cart[i].id == id && sections_in_cart[i].getAttribute('class') == "section_cart"){
             window.alert("This course is already in your cart.");
             return;
         }
@@ -145,11 +159,12 @@ function add_section(id){
         if (xhttp.readyState == 4 && xhttp.status == 200){
             // Create containing div
             var section_data = document.createElement('div');
+            section_data.setAttribute('class', 'section_cart');
             section_data.setAttribute('id', id);
             // Populate div with content
-            var section = parseTextList(xhttp/responseText)[0];
+            var section = parseTextList(xhttp.responseText)[0];
             //TODO Add instructor (and description?)
-            course_data.innerHTML = "<p>" + course['subject'] + " " + course['catalog_num'] + " " + course['title'] + "</p><a onclick='remove_course(this.parentElement)' href='javascript:;'>Remove</a>"
+            section_data.innerHTML = "<p>" + section['course'] + "</p><a onclick='remove_course(this.parentElement)' href='javascript:;'>Remove</a>"
             ;
             // Append the course
             document.getElementById("cart").appendChild(section_data);
@@ -158,16 +173,16 @@ function add_section(id){
             if (section['dow'] == '[]'){
                 var unscheduled_section = document.createElement('div');
                 unscheduled_section.setAttribute('id', id);
-                unscheduled_section.innerHTML = "<p>" + section['subject'] + " " + section['catalog_num'] + " " + section['title'] + "</p>";
+                unscheduled_section.innerHTML = "<p>" + section['course'] + "</p>";
                 document.getElementById("unscheduled").appendChild(unscheduled_section);
             }
             else {
                 var section_event = {
-                    title: section['name'],
+                    title: section['course'],
                     id: id,
                     //TODO add start and end date functionality
-                    start: "2015-10-09" + 'T' + start_time + ':00',
-                    end: "2016-10-09" + 'T' + end_time + ':00',
+                    start: "2015-10-09" + 'T' + section['start_time'] + ':00',
+                    end: "2016-10-09" + 'T' + section['end_time'] + ':00',
                     dow: section['dow']
                 }
                 $('#calendar').fullCalendar('renderEvent', section_event, 'stick');
@@ -209,7 +224,8 @@ $(document).ready(function(){
     // Load section dialog
     $('#dialog').dialog({
         autoOpen: false,
-        modal: true
+        modal: true,
+        minWidth: 600
     });
 
     // Load calendar
