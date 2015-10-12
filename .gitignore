@@ -1,0 +1,6 @@
+*.pyc
+*.py~
+*.sql~
+nuapiclient_key.py
+venv/
+python-client/

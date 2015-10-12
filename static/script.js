@@ -109,7 +109,11 @@ function show_sections(input){
             // clear dialog div
             var overlay_ul = document.getElementById('dialog_ul');
             var overlay_children = overlay_ul.children;
-            //TODO
+            /*
+            for (var i = 0; i < overlay_children.length; i++){
+                overlay_ul.removeChild(overlay_children[i]);
+            }
+            */
             while (overlay_ul.firstChild){
                 overlay_ul.removeChild(overlay_ul.firstChild);
             }
@@ -130,9 +134,9 @@ function show_sections(input){
                 section_link.innerHTML = "Section " + section['section'] + "  " + section['dow'] + " " + times + "  " + section['instructor'];
                 // Check if course is aleady in cart
                 var sections_in_cart = document.getElementById("cart").children;
-                for (var i = 0; i < sections_in_cart.length; i++){
+                for (var j = 0; j < sections_in_cart.length; j++){
                     // If yes, make link red
-                    if (sections_in_cart[i].id == section['id'] && sections_in_cart[i].getAttribute('class') == "section_cart"){
+                    if (sections_in_cart[j].id == section['id'] && sections_in_cart[j].getAttribute('class') == "section_cart"){
                         section_link.style.color = 'red';
                     }
                 }

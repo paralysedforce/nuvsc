@@ -3,8 +3,6 @@
 <b>TODO:</b>
 
 <ol>
-<ul>Fix bug that causes page to crash when overlays with multiple sections are loaded (most like has something to do with the while loop)</ul>
-<ul>Remove functionality from calendar event itself</ul>
 <ul>Add start and end date functionality</ul>
 <ul>graphics</ul>
 <ul>Add room and bulding data field in sections</ul>
