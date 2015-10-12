@@ -109,6 +109,7 @@ function show_sections(input){
             // clear dialog div
             var overlay_ul = document.getElementById('dialog_ul');
             var overlay_children = overlay_ul.children;
+            //TODO
             while (overlay_ul.firstChild){
                 overlay_ul.removeChild(overlay_ul.firstChild);
             }
