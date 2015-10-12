@@ -3,7 +3,6 @@
 <b>TODO:</b>
 
 <ol>
-<ul>Add start and end date functionality</ul>
 <ul>graphics</ul>
 <ul>Add room and bulding data field in sections</ul>
 <ul>security check</ul>
@@ -11,6 +10,7 @@
 <ul>user login and save functionality</ul>
 <ul>calendar conflict course color</ul>
 <ul>Travel time warning</ul>
+<ul>Give user choies wether to display weekends</ul>
 <ul>Make the calendar event start and stop on term dates instead of infinitely repeating</ul>
 <ul>export to google calendar</ul>
 <ul>search by distro field</ul>

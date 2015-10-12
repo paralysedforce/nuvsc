@@ -184,7 +184,7 @@ function add_section(id){
             // Populate div with content
             var section = parseTextList(xhttp.responseText)[0];
             //TODO Add instructor (and description?)
-            section_data.innerHTML = "<p>" + section['course'] + "</p><a onclick='remove_course(this.parentElement.id)' href='javascript:;'>Remove</a>"
+            section_data.innerHTML = "<p><b>" + section['course'] + "</b></p><p>Section " + section['section'] + "</p><p>" + section['instructor'] + "</p><a onclick='remove_course(this.parentElement.id)' href='javascript:;'>Remove</a>"
             ;
             // Append the course
             document.getElementById("cart").appendChild(section_data);
@@ -259,6 +259,9 @@ $(document).ready(function(){
     $('#calendar').fullCalendar({
         googleCalendarApiKey: 'AIzaSyDEbFn8eSO-K5iIv3LerSaHyonOC7plNcE',
         defaultView: 'agendaWeek',
+        weekends: false,
+        header: false,
+        columnFormat: 'ddd',
         height: "auto",
         minTime: "07:00:00",
         maxTime: "23:00:00",
