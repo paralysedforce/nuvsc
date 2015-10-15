@@ -12,6 +12,7 @@
     </ul>
 </li>
 <li>qtip deal with off the screen case</li>
+<li>do something with course_components</li>
 <li>Add room and bliding data field in sections</li>
 <li>security check</li>
 <li>place on web</li>
