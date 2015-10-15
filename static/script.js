@@ -44,7 +44,7 @@ function show_subjects(input){
             // Back link
             var back = document.createElement('div');
             back.setAttribute('class', 'subject_box');
-            back.innerHTML = "<a onclick='back(this)' href='javascript:;'>Back</a>";
+            back.innerHTML = "<h4 onclick='back(this)'><span class='label label-default'>Back</span><h4>";
             document.getElementById("visual_course_finder").appendChild(back);
             $('#visual_course_finder').append("<br class='subject_box'>");
             // Generate subject links
@@ -54,7 +54,7 @@ function show_subjects(input){
                 var subject_box = document.createElement('div');
                 subject_box.setAttribute('class', 'subject_box');
                 subject_box.setAttribute('id', subjects_list[i]['symbol']);
-                subject_box.innerHTML = "<a onclick='show_courses(this)' href='javascript:;'>" + subjects_list[i]['name'] + "</a>";
+                subject_box.innerHTML = "<h4 onclick='show_courses(this)'><span class='label label-primary'>" + subjects_list[i]['name'] + "</span></h4>";
                 document.getElementById("visual_course_finder").appendChild(subject_box);
             }
         }
