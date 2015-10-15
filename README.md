@@ -7,9 +7,9 @@
     <ul>
     <li>Change from jquery ui overlay to bootstrap modal</li>
     <li>Change from qtip to bootstrap popover</li>
+    <li>Add current term name</li>
     </ul>
 </li>
-<li>Add current term name</li>
 <li>qtip deal with off the screen case</li>
 <li>Add room and bliding data field in sections</li>
 <li>security check</li>
