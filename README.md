@@ -5,6 +5,7 @@
 <ol>
 <li>graphics
     <ul>
+    <li>fix footer</li>
     <li>Change from jquery ui overlay to bootstrap modal</li>
     <li>Change from qtip to bootstrap popover</li>
     <li>Add current term name</li>
