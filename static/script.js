@@ -44,7 +44,8 @@ function show_subjects(input){
             // Back link
             var back = document.createElement('div');
             back.setAttribute('class', 'subject_box');
-            back.innerHTML = "<button type='button' class='btn btn-default btn-small' onclick='back(this)'>Back</button>";
+            //TODO change this to creating a button using javascript then appending child
+            back.innerHTML = "<button type='button' class='btn btn-default btn-sm' onclick='back(this)'>Back</button>";
             document.getElementById("visual_course_finder").appendChild(back);
             $('#visual_course_finder').append("<br class='subject_box'>");
             // Generate subject links
@@ -57,6 +58,17 @@ function show_subjects(input){
                 subject_box.innerHTML = "<button type='button' class='btn btn-primary btn-xs btn-block subject_btn' onclick='show_courses(this)'>" + subjects_list[i]['name'] + "</button>";
                 document.getElementById("visual_course_finder").appendChild(subject_box);
             }
+            var btt_div = document.createElement('div');
+            btt_div.setAttribute('class', 'back_to_top');
+            // Back to top button
+            var back_to_top = document.createElement('a');
+            back_to_top.setAttribute('class', 'btn btn-default btn-xs subject_box');
+            back_to_top.setAttribute('href', '#');
+            back_to_top.setAttribute('role', 'button');
+            back_to_top.innerHTML = "Back to top";
+            
+            btt_div.appendChild(back_to_top);
+            document.getElementById("visual_course_finder").appendChild(btt_div);
         }
     }
     xhttp.open("GET", "/subjects/" + current_school, true);
