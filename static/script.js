@@ -54,7 +54,7 @@ function show_subjects(input){
                 var subject_box = document.createElement('div');
                 subject_box.setAttribute('class', 'subject_box');
                 subject_box.setAttribute('id', subjects_list[i]['symbol']);
-                subject_box.innerHTML = "<button type='button' class='btn btn-primary btn-xs' onclick='show_courses(this)'>" + subjects_list[i]['name'] + "</button>";
+                subject_box.innerHTML = "<button type='button' class='btn btn-primary btn-xs btn-block subject_btn' onclick='show_courses(this)'>" + subjects_list[i]['name'] + "</button>";
                 document.getElementById("visual_course_finder").appendChild(subject_box);
             }
         }

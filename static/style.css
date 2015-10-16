@@ -1,3 +1,7 @@
+ul {
+    padding-left: 15px;
+}
+
 .course_link {
     display: block;
 }
@@ -9,4 +13,8 @@
 
 .subject_box {
     padding-bottom: 1px;
+}
+
+.subject_btn {
+    white-space: normal;
 }

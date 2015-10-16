@@ -8,6 +8,7 @@
             <li>fix footer</li>
             <li>Change from jquery ui overlay to bootstrap modal</li>
             <li>Change from qtip to bootstrap popover</li>
+            <li>Add a "Back to top" button<li>
         </ul>
     </li>
     <li>Add current term name</li>
