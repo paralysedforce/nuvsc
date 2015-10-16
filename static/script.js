@@ -44,7 +44,7 @@ function show_subjects(input){
             // Back link
             var back = document.createElement('div');
             back.setAttribute('class', 'subject_box');
-            back.innerHTML = "<h4 onclick='back(this)'><span class='label label-default'>Back</span><h4>";
+            back.innerHTML = "<button type='button' class='btn btn-default btn-small' onclick='back(this)'>Back</button>";
             document.getElementById("visual_course_finder").appendChild(back);
             $('#visual_course_finder').append("<br class='subject_box'>");
             // Generate subject links
@@ -54,7 +54,7 @@ function show_subjects(input){
                 var subject_box = document.createElement('div');
                 subject_box.setAttribute('class', 'subject_box');
                 subject_box.setAttribute('id', subjects_list[i]['symbol']);
-                subject_box.innerHTML = "<h4 onclick='show_courses(this)'><span class='label label-primary'>" + subjects_list[i]['name'] + "</span></h4>";
+                subject_box.innerHTML = "<button type='button' class='btn btn-primary btn-xs' onclick='show_courses(this)'>" + subjects_list[i]['name'] + "</button>";
                 document.getElementById("visual_course_finder").appendChild(subject_box);
             }
         }
@@ -74,22 +74,38 @@ function show_courses(input){
         if (xhttp.readyState == 4 && xhttp.status == 200){
             text_data = xhttp.responseText;
             courses_list = parseTextList(text_data);
+
+            // Get all the subject boxes
+            var subjects = document.getElementsByClassName("subject_box");
+            var subject_box_obj = {};
+            for (var j = 0; j < subjects.length; j++){
+                // Make sure it's being appended to the subject, not the school 
+                // (Some schools have same symbol as some subjects)
+                if (subjects[j].getAttribute('id') == current_subject[current_subject.length - 1]){
+                    // Choose the right subject_box
+                    subject_box_obj = subjects[j];
+                }
+            }
+            // Make a ul element
+            var subject_ul = document.createElement('ul');
+            subject_ul.setAttribute('id', courses_list[0]['subject'] + "_ul");
+            // Put the ul element inside of subject_box
+            subject_box_obj.appendChild(subject_ul);
+            // For every course in subject
             for (var i = 0; i < courses_list.length; i++){
                 var course = courses_list[i];
+                // Make course link
                 var course_link = document.createElement('a');
                 course_link.setAttribute('id', course['name']);
                 course_link.setAttribute('class', 'course_link');
                 course_link.setAttribute('onclick', "show_sections(this)");
                 course_link.setAttribute('href', 'javascript:;');
-                course_link.innerHTML = "-- " + course['name'];
-                var subjects = document.getElementsByClassName("subject_box");
-                for (var j = 0; j < subjects.length; j++){
-                    // Make sure it's being appended to the subject, not the school 
-                    // (Some schools have same symbol as some subjects)
-                    if (subjects[j].getAttribute('id') == current_subject[current_subject.length - 1]){
-                        subjects[j].appendChild(course_link);
-                    }
-                }
+                course_link.innerHTML = course['name'];
+                // Put link inside li element
+                var course_li = document.createElement('li');
+                course_li.appendChild(course_link);
+                // Put li element inside ul
+                subject_ul.appendChild(course_li);
             }
         }
     }
