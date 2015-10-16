@@ -5,7 +5,6 @@
 <ol>
     <li>graphics
         <ul>
-            <li>Change from jquery ui overlay to bootstrap modal</li>
             <li>Change from qtip to bootstrap popover</li>
         </ul>
     </li>

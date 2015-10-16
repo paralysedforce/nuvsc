@@ -111,6 +111,8 @@ function show_courses(input){
                 course_link.setAttribute('id', course['name']);
                 course_link.setAttribute('class', 'course_link');
                 course_link.setAttribute('onclick', "show_sections(this)");
+                course_link.setAttribute('data-toggle', 'modal');
+                course_link.setAttribute('data-target', '#sections_modal');
                 course_link.setAttribute('href', 'javascript:;');
                 course_link.innerHTML = course['name'];
                 // Put link inside li element
@@ -126,27 +128,20 @@ function show_courses(input){
 }
 
 function show_sections(input){
-    $('#dialog').dialog("open");
-
     var xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function(){
         if (xhttp.readyState == 4 && xhttp.status == 200){
             // Get ajax sections info
             text_data = xhttp.responseText;
             sections_list = parseTextList(text_data);
-            // clear dialog div
-            var overlay_ul = document.getElementById('dialog_ul');
-            var overlay_children = overlay_ul.children;
-            /*
-            for (var i = 0; i < overlay_children.length; i++){
-                overlay_ul.removeChild(overlay_children[i]);
+            // clear modal
+            var modal_ul = document.getElementById('modal_ul');
+            var modal_children = modal_ul.children;
+            while (modal_ul.firstChild){
+                modal_ul.removeChild(modal_ul.firstChild);
             }
-            */
-            while (overlay_ul.firstChild){
-                overlay_ul.removeChild(overlay_ul.firstChild);
-            }
-            // Set overlay title
-            document.getElementById('ui-id-1').innerHTML = sections_list[0]['course'];
+            // Set modal title
+            document.getElementById('modal_title').innerHTML = sections_list[0]['course'];
             // turn into html section links
             for (var i = 0; i < sections_list.length; i++){
                 var section = sections_list[i];
@@ -175,7 +170,7 @@ function show_sections(input){
 
                 // insert html section links to dialog div
                 li.appendChild(section_link);
-                document.getElementById('dialog_ul').appendChild(li);
+                document.getElementById('modal_ul').appendChild(li);
             }
         }
     }
@@ -276,13 +271,6 @@ function back(input){
 }
 
 $(document).ready(function(){
-    // Load section dialog
-    $('#dialog').dialog({
-        autoOpen: false,
-        modal: true,
-        minWidth: 600
-    });
-
     // Load calendar
     $('#calendar').fullCalendar({
         googleCalendarApiKey: 'AIzaSyDEbFn8eSO-K5iIv3LerSaHyonOC7plNcE',
