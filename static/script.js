@@ -286,16 +286,12 @@ $(document).ready(function(){
             googleCalendarId: '57bcm4ch79o7820fm5d66e09j8@group.calendar.google.com',
         },
         eventRender: function(event, element){
-            element.qtip({
-                content: "<b>" + event.title + "</b><br>Section " + event.section + "<br>" + event.instructor + "<br><a onclick='remove_course(" + event.id + ")' href='javascript:;'>Remove</a>",
-                show: {
-                    solo: true
-                },
-                hide: {
-                    fixed: true,
-                    delay: 300
-                }
-            });
+            //element[0].setAttribute('tabindex', 0);
+            //element[0].style.cursor = 'pointer';
+            element[0].setAttribute('data-toggle', 'popover');
+            element[0].setAttribute('title', "<b>" + event.title + "</b>");
+            element[0].setAttribute('data-content', "Section " + event.section + "<br>" + event.instructor + "<br><a onclick='remove_course(" + event.id + ")' href='javascript:;'>Remove</a>");
+            $(element[0]).popover({animation:false, trigger:'hover', html:true})
         }
     });
 
