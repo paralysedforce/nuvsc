@@ -232,6 +232,10 @@ function add_section(id){
                 }
                 $('#calendar').fullCalendar('renderEvent', section_event, 'stick');
             }
+
+            // Increment number of courses
+            var num = parseInt(document.getElementById("number_of_courses").innerHTML) + 1;
+            document.getElementById("number_of_courses").innerHTML = num;
         }
     }
     xhttp.open("GET", "/section/" + id, true);
@@ -255,6 +259,9 @@ function remove_course(id){
             unscheduled_children[i].remove();
         }
     }
+    // Decrement number of courses
+    var num = parseInt(document.getElementById("number_of_courses").innerHTML) - 1;
+    document.getElementById("number_of_courses").innerHTML = num;
 }
 
 function back(input){

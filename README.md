@@ -3,8 +3,7 @@
 <b>TODO:</b>
 
 <ol>
-    <li>Add current term name</li>
-    <li>add number of hours/classes<li>
+    <li>add number of hours<li>
     <li>do something with course_components (discussion sections, etc)</li>
     <li>Make shopping cart an accordion with each class having discussion sections, course descriptions, instructor, meeting place, time, etc</li>
     <li>Add room and builiding data , also deal with course description data field in sections</li>
