@@ -188,6 +188,22 @@ def index():
     schools = query_db("SELECT symbol, name FROM schools")
     return render_template('index.html', schools = schools)
 
+@app.route('/about')
+def about():
+    return render_template('about.html')
+
+@app.route('/contact')
+def contact():
+    return render_template('contact.html')
+
+@app.route('/development')
+def development():
+    return render_template('development.html')
+
+@app.route('/login')
+def login():
+    return render_template('login.html')
+
 @app.route('/subjects/<school_symbol>')
 def subjects(school_symbol):
     subjects = query_db("SELECT symbol, name FROM subjects WHERE school = ?", [str(school_symbol)])

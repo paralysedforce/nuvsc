@@ -3,16 +3,11 @@
 <b>TODO:</b>
 
 <ol>
-    <li>graphics
-        <ul>
-            <li>Change from qtip to bootstrap popover</li>
-        </ul>
-    </li>
     <li>Add current term name</li>
     <li>add number of hours/classes<li>
-    <li>qtip deal with off the screen case</li>
     <li>do something with course_components (discussion sections, etc)</li>
-    <li>Add room and builiding data field in sections</li>
+    <li>Make shopping cart an accordion with each class having discussion sections, course descriptions, instructor, meeting place, time, etc</li>
+    <li>Add room and builiding data , also deal with course description data field in sections</li>
     <li>security check</li>
     <li>place on web</li>
     <li>calendar conflict course color</li>
