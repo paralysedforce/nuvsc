@@ -204,11 +204,35 @@ function add_section(id){
             var section_data = document.createElement('div');
             section_data.setAttribute('class', 'section_cart');
             section_data.setAttribute('id', id);
+            
             // Populate div with content
             var section = parseTextList(xhttp.responseText)[0];
-            //TODO Add instructor (and description?)
-            section_data.innerHTML = "<p><b>" + section['course'] + "</b></p><p>Section " + section['section'] + "</p><p>" + section['instructor'] + "</p><a onclick='remove_course(this.parentElement.id)' href='javascript:;'>Remove</a>"
-            ;
+
+            var course_p = document.createElement('p');
+            course_p.innerHTML = "<b>" + section['course'] + "</b>";
+
+            var section_p = document.createElement('p');
+            section_p.innerHTML = "Section " + section['section'];
+            
+            var instructor_p = document.createElement('p');
+            instructor_p.innerHTML = section['instructor'];
+
+            var room_p = document.createElement('p');
+            room_p.innerHTML = section['room'];
+
+            var overview_p = document.createElement('p');
+            overview_p.innerHTML = section['overview'];
+
+            var requirements_p = document.createElement('p');
+            requirements_p.innerHTML = section['requirements'];
+
+            var remove_a = document.createelement('a');
+            remove_a.setAttribute('onclick', 'remove_course(this.parentElement.id)');
+            remove_a.setAttribute('href', 'javascript:;');
+            remove_a.innerHTML = "Remove";
+
+            section_data.innerHTML = course_p + section_p + instructor_p + room_p + overview_p + requirements_p + remove_a;
+
             // Append the course
             document.getElementById("cart").appendChild(section_data);
 
@@ -231,7 +255,10 @@ function add_section(id){
                     end: end_formatted,
                     dow: section['dow'],
                     section: section['section'],
-                    instructor: section['instructor']
+                    instructor: section['instructor'],
+                    room: section['room'],
+                    overview: section['overview'],
+                    requirements: section['requirements']
                 }
                 $('#calendar').fullCalendar('renderEvent', section_event, 'stick');
             }
@@ -270,7 +297,6 @@ function remove_course(id){
     var start = start_moment['_d'];
     var end = end_moment['_d'];
     var min = (end - start) / 60000;
-    console.log(min);
     // in case of unscheduled courses
     if (isNaN(min)){
         min = 0;
