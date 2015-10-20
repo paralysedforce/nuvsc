@@ -40,7 +40,7 @@ CREATE TABLE sections (
     instructor TEXT,
     section TEXT,
     course TEXT,
-    location TEXT,
+    room TEXT,
     overview TEXT,
     requirements TEXT,
     FOREIGN KEY (course) REFERENCES courses (name),
@@ -64,14 +64,4 @@ CREATE TABLE components (
     end_time TEXT,
     section TEXT,
     room TEXT
-);
-
-DROP TABLE if EXISTS rooms;
-CREATE TABLE rooms (
-    id INTEGER,
-    name TEXT,
-    building TEXT,
-    lat DECIMAL,
-    lon DECIMAL,
-    PRIMARY KEY (id, building)
 );

@@ -3,9 +3,9 @@
 <b>TODO:</b>
 
 <ol>
+    <li>Update section data so that rooms are strings, not ids</li>
+    <li>Make shopping cart an accordion</li>
     <li>do something with course_components (discussion sections, etc)</li>
-    <li>Make shopping cart an accordion with each class having discussion sections, course descriptions, instructor, meeting place, time, etc</li>
-    <li>Add room and builiding data , also deal with course description data field in sections</li>
     <li>security check</li>
     <li>place on web</li>
     <li>calendar conflict course color</li>

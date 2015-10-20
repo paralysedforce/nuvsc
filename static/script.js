@@ -209,7 +209,7 @@ function add_section(id){
             var section = parseTextList(xhttp.responseText)[0];
 
             var course_p = document.createElement('p');
-            course_p.innerHTML = "<b>" + section['course'] + "</b>";
+            course_p.innerHTML = "<h4><b>" + section['course'] + "</b></h4>";
 
             var section_p = document.createElement('p');
             section_p.innerHTML = "Section " + section['section'];
@@ -221,17 +221,23 @@ function add_section(id){
             room_p.innerHTML = section['room'];
 
             var overview_p = document.createElement('p');
-            overview_p.innerHTML = section['overview'];
+            overview_p.innerHTML = "<b>Overview:</b> " + section['overview'];
 
             var requirements_p = document.createElement('p');
-            requirements_p.innerHTML = section['requirements'];
+            requirements_p.innerHTML = "<b>Requirements:</b> " + section['requirements'];
 
-            var remove_a = document.createelement('a');
+            var remove_a = document.createElement('a');
             remove_a.setAttribute('onclick', 'remove_course(this.parentElement.id)');
             remove_a.setAttribute('href', 'javascript:;');
             remove_a.innerHTML = "Remove";
 
-            section_data.innerHTML = course_p + section_p + instructor_p + room_p + overview_p + requirements_p + remove_a;
+            section_data.appendChild(course_p);
+            section_data.appendChild(instructor_p);
+            section_data.appendChild(section_p);
+            section_data.appendChild(room_p);
+            section_data.appendChild(overview_p);
+            section_data.appendChild(requirements_p);
+            section_data.appendChild(remove_a);
 
             // Append the course
             document.getElementById("cart").appendChild(section_data);

@@ -151,7 +151,7 @@ def update_sections():
             if section['room'] is None:
                 room_val = 0
             else:
-                room_val = section['room']['id']
+                room_val = section['room']['building_name'] + " " + section['room']['name']
             new_sections.append(
                 {'id':int(section['id']),
                  'catalog_num':str(section['catalog_num']),
@@ -162,7 +162,7 @@ def update_sections():
                  'instructor':str(section['instructor']['name']),
                  'section':str(section['section']),
                  'course':str(section['subject'] + " " + section['catalog_num'] + " " + section['title']),
-                 'room':int(room_val),
+                 'room':str(room_val),
                  'overview':str(section['overview']),
                  'requirements':str(section['requirements'])
                 }
@@ -249,6 +249,7 @@ def initialize_components():
         db.execute("INSERT INTO components VALUES (?, ?, ?, ?, ?, ?, ?)", vals)
         db.commit()
 
+# UNUSED
 def initialize_rooms():
     room_ids = [x['room'] for x in query_db("SELECT room FROM sections")]
 
@@ -288,9 +289,6 @@ def initialize_rooms():
 def index():
     term_name = query_db("SELECT MAX(id), name FROM terms")[0]['name']
     schools = query_db("SELECT symbol, name FROM schools")
-
-    initialize_rooms()
-
     return render_template('index.html', term = term_name, schools = schools)
 
 @app.route('/about')
@@ -328,7 +326,7 @@ def courses(subject_symbol):
 
 @app.route('/sections/<course_name>')
 def sections(course_name):
-    sections = query_db("SELECT id, catalog_num, title, dow, start_time, end_time, instructor, section, course FROM sections WHERE course = ?", [course_name])
+    sections = query_db("SELECT id, catalog_num, title, dow, start_time, end_time, instructor, section, course, room, overview, requirements FROM sections WHERE course = ?", [course_name])
     sections_json = [
                         {'id':x['id'],
                          'catalog_num':x['catalog_num'],
@@ -338,7 +336,10 @@ def sections(course_name):
                          'end_time':x['end_time'],
                          'instructor':x['instructor'],
                          'section':x['section'],
-                         'course':x['course']
+                         'course':x['course'],
+                         'room':x['room'],
+                         'overview':x['overview'],
+                         'requirements':x['requirements']
                         } for x in sections
                     ]
     return json.dumps(sections_json)
@@ -353,7 +354,10 @@ def section(section_id):
                        "end_time, "
                        "instructor, "
                        "section, "
-                       "course " 
+                       "course, " 
+                       "room, " 
+                       "overview, " 
+                       "requirements " 
                        "FROM sections WHERE id = ?",
                        [int(section_id)])[0]
     section_json = [
@@ -365,7 +369,10 @@ def section(section_id):
                          'end_time':section['end_time'],
                          'instructor':section['instructor'],
                          'section':section['section'],
-                         'course':section['course']
+                         'course':section['course'],
+                         'room':section['room'],
+                         'overview':section['overview'],
+                         'requirements':section['requirements']
                         }
                     ]
     return json.dumps(section_json)
