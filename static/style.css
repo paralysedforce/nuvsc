@@ -43,6 +43,10 @@ ul {
     width: 500px;
 }
 
+#unscheduled {
+    min-height: 100px;
+}
+
 .info_headings {
     display: inline;
 }

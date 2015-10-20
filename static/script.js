@@ -212,6 +212,9 @@ function add_section(id){
             // Append the course
             document.getElementById("cart").appendChild(section_data);
 
+            var start_formatted = "2015-10-09" + 'T' + section['start_time'] + ':00';
+            var end_formatted = "2015-10-09" + 'T' + section['end_time'] + ':00';
+
             // Adding course to calendar
             if (section['dow'] == '[]'){
                 var unscheduled_section = document.createElement('div');
@@ -224,8 +227,8 @@ function add_section(id){
                     title: section['course'],
                     id: id,
                     //TODO add start and end date functionality
-                    start: "2015-10-09" + 'T' + section['start_time'] + ':00',
-                    end: "2016-10-09" + 'T' + section['end_time'] + ':00',
+                    start: start_formatted,
+                    end: end_formatted,
                     dow: section['dow'],
                     section: section['section'],
                     instructor: section['instructor']
@@ -236,6 +239,22 @@ function add_section(id){
             // Increment number of courses
             var num = parseInt(document.getElementById("number_of_courses").innerHTML) + 1;
             document.getElementById("number_of_courses").innerHTML = num;
+
+            // Increment hours per week
+            var start = new Date(start_formatted);
+            var end = new Date(end_formatted);
+            var min = (end - start) / 60000;
+            // in case of unscheduled courses
+            if (isNaN(min)){
+                min = 0;
+            }
+            if (min % 30 == 20){
+                min += 10;
+            }
+            var hr = parseFloat(min) / 60;
+            var days = $('#calendar').fullCalendar('clientEvents', idOrFilter = id).length;
+            var old_hr = parseFloat(document.getElementById("course_hours").innerHTML);
+            document.getElementById("course_hours").innerHTML = old_hr + hr * days;
         }
     }
     xhttp.open("GET", "/section/" + id, true);
@@ -243,6 +262,26 @@ function add_section(id){
 }
 
 function remove_course(id){
+    // Decrement hrs / wk
+    var calendar_event = $('#calendar').fullCalendar('clientEvents', idOrFilter = id);
+    var days = calendar_event.length;
+    var start_moment = calendar_event[0].start;
+    var end_moment = calendar_event[0].end;
+    var start = start_moment['_d'];
+    var end = end_moment['_d'];
+    var min = (end - start) / 60000;
+    console.log(min);
+    // in case of unscheduled courses
+    if (isNaN(min)){
+        min = 0;
+    }
+    if (min % 30 == 20){
+        min += 10;
+    }
+    var hr = parseFloat(min) / 60;
+    var old_hr = parseFloat(document.getElementById("course_hours").innerHTML);
+    document.getElementById("course_hours").innerHTML = old_hr - hr * days;
+    
     // Remove event from calendar
     $('#calendar').fullCalendar('removeEvents', idOrFilter = id);
     // Remove event from cart
