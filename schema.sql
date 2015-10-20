@@ -50,18 +50,28 @@ CREATE TABLE sections (
 
 DROP TABLE if EXISTS descriptions;
 CREATE TABLE descriptions (
-    id INTEGER PRIMARY KEY,
+    id INTEGER,
     name TEXT,
     description TEXT
 );
 
 DROP TABLE if EXISTS components;
 CREATE TABLE components (
-    id INTEGER PRIMARY KEY,
+    id INTEGER,
     component TEXT,
     dow TEXT,
     start_time TEXT,
     end_time TEXT,
     section TEXT,
     room TEXT
+);
+
+DROP TABLE if EXISTS rooms;
+CREATE TABLE rooms (
+    id INTEGER,
+    name TEXT,
+    building TEXT,
+    lat DECIMAL,
+    lon DECIMAL,
+    PRIMARY KEY (id, building)
 );

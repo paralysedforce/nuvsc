@@ -138,8 +138,7 @@ def update_courses():
                         pass
 
 def update_sections():
-    # Get a list of old section ids
-    old_ids = [x['id'] for x in query_db("SELECT id FROM sections ORDER BY id ASC")]
+    old_ids = [x['id'] for x in query_db("SELECT id FROM descriptions ORDER BY id ASC")]
 
     subject_symbols = [x['symbol'] for x in query_db("SELECT symbol FROM subjects")]
 
@@ -147,8 +146,12 @@ def update_sections():
 
     new_sections = []
     for sub_symb in subject_symbols:
-        sections = client.courses(term = term_id, subject = str(sub_symb))
+        sections = client.courses_details(term = term_id, subject = str(sub_symb))
         for section in sections:
+            if section['room'] is None:
+                room_val = 0
+            else:
+                room_val = section['room']['id']
             new_sections.append(
                 {'id':int(section['id']),
                  'catalog_num':str(section['catalog_num']),
@@ -156,9 +159,12 @@ def update_sections():
                  'dow':str(convertDaysToDOW(section['meeting_days'])),
                  'start_time':str(section['start_time']),
                  'end_time':str(section['end_time']),
-                 'instructor':str(section['instructor']),
+                 'instructor':str(section['instructor']['name']),
                  'section':str(section['section']),
-                 'course':str(section['subject'] + " " + section['catalog_num'] + " " + section['title'])
+                 'course':str(section['subject'] + " " + section['catalog_num'] + " " + section['title']),
+                 'room':int(room_val),
+                 'overview':str(section['overview']),
+                 'requirements':str(section['requirements'])
                 }
             )
 
@@ -174,19 +180,117 @@ def update_sections():
                             new_section['end_time'],
                             new_section['instructor'],
                             new_section['section'],
-                            new_section['course']]
+                            new_section['course'],
+                            new_section['room'],
+                            new_section['overview'],
+                            new_section['requirements']]
                     try:
                         db = get_db()
-                        db.execute("INSERT INTO sections VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)", vals)
+                        db.execute("INSERT INTO sections VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", vals)
                         db.commit()
                     except sqlite3.IntegrityError:
                         print new_section['id']
+
+def initialize_descriptions():
+    subject_symbols = [x['symbol'] for x in query_db("SELECT symbol FROM subjects")]
+
+    term_id = query_db("SELECT MAX(id) FROM terms")[0][0]
+
+    new_descriptions = []
+    for sub_symb in subject_symbols:
+        sections = client.courses_details(term = term_id, subject = str(sub_symb))
+        for section in sections:
+            for description in section['course_descriptions']:
+                new_descriptions.append(
+                    {'id':int(section['id']),
+                     'name':str(description['name']),
+                     'description':str(description['desc'])
+                    }
+                )
+
+    for new_description in new_descriptions:
+        vals = [new_description['id'],
+                new_description['name'],
+                new_description['description']]
+        db = get_db()
+        db.execute("INSERT INTO descriptions VALUES (?, ?, ?)", vals)
+        db.commit()
+
+def initialize_components():
+    subject_symbols = [x['symbol'] for x in query_db("SELECT symbol FROM subjects")]
+
+    term_id = query_db("SELECT MAX(id) FROM terms")[0][0]
+
+    new_components = []
+    for sub_symb in subject_symbols:
+        sections = client.courses_details(term = term_id, subject = str(sub_symb))
+        for section in sections:
+            for component in section['course_components']:
+                new_components.append(
+                    {'id':int(section['id']),
+                     'component':str(component['component']),
+                     'dow':str(convertDaysToDOW(component['meeting_days'])),
+                     'start_time':str(component['start_time']),
+                     'end_time':str(component['end_time']),
+                     'section':str(component['section']),
+                     'room':str(component['room'])
+                    }
+                )
+
+    for new_component in new_components:
+        vals = [new_component['id'],
+                new_component['component'],
+                new_component['dow'],
+                new_component['start_time'],
+                new_component['end_time'],
+                new_component['section'],
+                new_component['room']]
+        db = get_db()
+        db.execute("INSERT INTO components VALUES (?, ?, ?, ?, ?, ?, ?)", vals)
+        db.commit()
+
+def initialize_rooms():
+    room_ids = [x['room'] for x in query_db("SELECT room FROM sections")]
+
+    new_rooms = []
+    for room_id in room_ids:
+        rooms = client.rooms_details(id = room_id)
+        for room in rooms:
+            if room['building']['lat'] is None:
+                lat_val = 0
+            else:
+                lat_val = room['building']['lat']
+            if room['building']['lon'] is None:
+                lon_val = 0
+            else:
+                lon_val = room['building']['lon']
+            new_rooms.append(
+                {'id':int(room['id']),
+                 'name':str(room['name']),
+                 'building':str(room['building']['name']),
+                 'lat':float(lat_val),
+                 'lon':float(lon_val)
+                }
+            )
+
+    for new_room in new_rooms:
+        vals = [new_room['id'],
+                new_room['name'],
+                new_room['building'],
+                new_room['lat'],
+                new_room['lon']]
+        db = get_db()
+        db.execute("INSERT INTO rooms VALUES (?, ?, ?, ?, ?)", vals)
+        db.commit()
 
 
 @app.route('/')
 def index():
     term_name = query_db("SELECT MAX(id), name FROM terms")[0]['name']
     schools = query_db("SELECT symbol, name FROM schools")
+
+    initialize_rooms()
+
     return render_template('index.html', term = term_name, schools = schools)
 
 @app.route('/about')
