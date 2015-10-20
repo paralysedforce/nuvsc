@@ -40,5 +40,28 @@ CREATE TABLE sections (
     instructor TEXT,
     section TEXT,
     course TEXT,
-    FOREIGN KEY (course) REFERENCES courses (name)
+    location TEXT,
+    overview TEXT,
+    requirements TEXT,
+    FOREIGN KEY (course) REFERENCES courses (name),
+    FOREIGN KEY (id) REFERENCES descriptions (id),
+    FOREIGN KEY (id) REFERENCES components (id)
+);
+
+DROP TABLE if EXISTS descriptions;
+CREATE TABLE descriptions (
+    id INTEGER PRIMARY KEY,
+    name TEXT,
+    description TEXT
+);
+
+DROP TABLE if EXISTS components;
+CREATE TABLE components (
+    id INTEGER PRIMARY KEY,
+    component TEXT,
+    dow TEXT,
+    start_time TEXT,
+    end_time TEXT,
+    section TEXT,
+    room TEXT
 );

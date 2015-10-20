@@ -1,9 +1,8 @@
-# Northwestern Visual Shopping Cart (NUVSC)
+# Serif: A Visual Shopping Cart for Northwestern University
 
 <b>TODO:</b>
 
 <ol>
-    <li>add number of hours<li>
     <li>do something with course_components (discussion sections, etc)</li>
     <li>Make shopping cart an accordion with each class having discussion sections, course descriptions, instructor, meeting place, time, etc</li>
     <li>Add room and builiding data , also deal with course description data field in sections</li>
