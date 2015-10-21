@@ -191,6 +191,27 @@ function add_section_visual(id){
     if (section_link.getAttribute('class') == 'section_link'){
         section_link.style.color = 'red';
     }
+    $.get("/components/" + id, function(components_data){
+
+        if (components_data != "{}"){
+            var components = parseTextList(components_data)[0];
+            var comp_panel = document.createElement('div');
+            comp_panel.setAttribute('class', 'panel panel-default');
+            var comp_heading = document.createElement('div');
+            comp_heading.setAttribute('class', 'panel-heading');
+            comp_heading.innerHTML = "Choose a component:";
+            var comp_body = document.createElement('div');
+            comp_body.setAttribute('class', 'panel-body');
+            comp_panel.appendChild(comp_heading);
+            comp_panel.appendChild(comp_body);
+            for (var key in components){
+                var comp_link = document.createElement('a');
+                comp_link.innerHTML = components[key];
+                comp_body.appendChild(comp_link);
+            }
+            insertAfter(comp_panel, section_link);
+        }
+    });
     add_section(id);
 }
 
@@ -207,27 +228,6 @@ function add_section(id){
     // Adding info to cart
     $.get("/section/" + id, function(section_request_data){
         $.get("/descriptions/" + id, function(descriptions_data){
-            $.get("/components/" + id, function(components_data){
-
-                if (components_data != "{}"){
-                    var components = parseTextList(components_data)[0];
-                    var components_link = document.getElementById(id);
-                    var comp_panel = document.createElement('div');
-                    comp_panel.setAttribute('class', 'panel panel-default');
-                    var comp_heading = document.createElement('div');
-                    comp_heading.setAttribute('class', 'panel-heading');
-                    comp_heading.innerHTML = "Choose a component:";
-                    var comp_body = document.createElement('div');
-                    comp_body.setAttribute('class', 'panel-body');
-                    comp_panel.appendChild(comp_heading);
-                    comp_panel.appendChild(comp_body);
-                    for (var key in components){
-                        var comp_link = document.createElement('a');
-                        comp_link.innerHTML = components[key];
-                        comp_body.appendChild(comp_link);
-                    }
-                    insertAfter(comp_panel, components_link);
-                }
 
                 // Create containing div
                 var section_data = document.createElement('div');
@@ -359,7 +359,6 @@ function add_section(id){
                 var days = $('#calendar').fullCalendar('clientEvents', idOrFilter = id).length;
                 var old_hr = parseFloat(document.getElementById("course_hours").innerHTML);
                 document.getElementById("course_hours").innerHTML = old_hr + hr * days;
-            });
         });
     });
 }
