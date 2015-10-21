@@ -395,6 +395,15 @@ def section(section_id):
                     ]
     return json.dumps(section_json)
 
+@app.route('/descriptions/<int:section_id>')
+def descriptions(section_id):
+    descriptions = query_db("SELECT name, description FROM descriptions WHERE id=?", [section_id])
+    desc_dict = {}
+    for description in descriptions:
+        desc_dict[description['name']] = description['description']
+    print json.dumps(desc_dict)
+    return json.dumps(desc_dict)
+
 @app.route('/all_sections')
 def all_sections():
     sections_list = []

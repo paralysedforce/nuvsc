@@ -4,10 +4,10 @@
 
 <ol>
     <li>do something with course_components (discussion sections, etc)</li>
-    <li>do something with descriptions</li>
     <li>security check</li>
     <li>turn debug mode off</li>
     <li>place on web</li>
+    <li>add remove button to header of cart collapsible panels</li>
     <li>calendar conflict course color</li>
     <li>user login and save functionality</li>
     <li>Travel time warning</li>

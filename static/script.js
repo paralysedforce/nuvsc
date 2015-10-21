@@ -3,7 +3,11 @@ var current_school = "";
 var current_subject = [];
 
 function parseTextList(li){
-    var str_li = li.substring(1, li.length - 1).split('{').slice(1);
+    if (li[0] == '[' && li[li.length - 1] == ']'){
+        var str_li = li.substring(1, li.length - 1).split('{').slice(1);
+    } else{
+        var str_li = li.split('{').slice(1);
+    }
     var json_li = [];
     for (var i = 0; i < str_li.length; i++){
         if (i == str_li.length - 1){
@@ -186,27 +190,31 @@ function add_section_visual(id){
     add_section(id);
 }
 
+function get_descriptions(id){
+    var descriptions = {};
+    return descriptions;
+}
+
 function add_section(id){
     // Check if course is aleady in cart
     var sections_in_cart = document.getElementById("cart").children;
     for (var i = 0; i < sections_in_cart.length; i++){
-        if (sections_in_cart[i].id == id && sections_in_cart[i].getAttribute('class') == "section_cart"){
+        if (sections_in_cart[i].id == id){
             window.alert("This course is already in your cart.");
             return;
         }
     }
 
     // Adding info to cart
-    var xhttp = new XMLHttpRequest();
-    xhttp.onreadystatechange = function(){
-        if (xhttp.readyState == 4 && xhttp.status == 200){
+    $.get("/section/" + id, function(section_request_data){
+        $.get("/descriptions/" + id, function(descriptions_data){
             // Create containing div
             var section_data = document.createElement('div');
             section_data.setAttribute('class', 'section_cart panel panel-default');
             section_data.setAttribute('id', id);
 
             // Populate div with content
-            var section = parseTextList(xhttp.responseText)[0];
+            var section = parseTextList(section_request_data)[0];
 
             // Create panel heading and panel
             var panel_head = document.createElement('div');
@@ -251,6 +259,31 @@ function add_section(id){
             panel_body.appendChild(room_p);
             panel_body.appendChild(overview_p);
             panel_body.appendChild(requirements_p);
+
+            descriptions = parseTextList(descriptions_data)[0];
+
+            if (descriptions != "") {
+                var descriptions_link = document.createElement('a');
+                descriptions_link.setAttribute('role', 'button');
+                descriptions_link.setAttribute('data-toggle', 'collapse');
+                descriptions_link.setAttribute('data-target', '#' + id + '_descriptions');
+                descriptions_link.innerHTML = "Toggle More Descriptions";
+                var descriptions_div = document.createElement('div');
+                descriptions_div.setAttribute('class', 'collapse');
+                descriptions_div.setAttribute('id', id + '_descriptions');
+                for (var key in descriptions){
+                    var desc_name = document.createElement('b');
+                    desc_name.innerHTML = key;
+                    descriptions_div.appendChild(desc_name);
+                    var desc_desc = document.createElement('p');
+                    desc_desc.innerHTML = descriptions[key];
+                    descriptions_div.appendChild(desc_desc);
+                }
+                panel_body.appendChild(descriptions_link);
+                panel_body.appendChild(descriptions_div);
+            }
+
+            panel_body.appendChild(document.createElement('br'));
             panel_body.appendChild(remove_a);
 
             section_data.appendChild(panel_head);
@@ -305,10 +338,8 @@ function add_section(id){
             var days = $('#calendar').fullCalendar('clientEvents', idOrFilter = id).length;
             var old_hr = parseFloat(document.getElementById("course_hours").innerHTML);
             document.getElementById("course_hours").innerHTML = old_hr + hr * days;
-        }
-    }
-    xhttp.open("GET", "/section/" + id, true);
-    xhttp.send();
+        });
+    });
 }
 
 function remove_course(id){
