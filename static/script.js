@@ -202,12 +202,26 @@ function add_section(id){
         if (xhttp.readyState == 4 && xhttp.status == 200){
             // Create containing div
             var section_data = document.createElement('div');
-            section_data.setAttribute('class', 'section_cart');
+            section_data.setAttribute('class', 'section_cart panel panel-default');
             section_data.setAttribute('id', id);
-            
+
             // Populate div with content
             var section = parseTextList(xhttp.responseText)[0];
 
+            // Create panel heading and panel
+            var panel_head = document.createElement('div');
+            panel_head.setAttribute('class', 'panel-heading');
+            var panel_title = document.createElement('h4');
+            panel_title.setAttribute('class', 'panel-title');
+            panel_title.innerHTML = "<a data-toggle='collapse' href='#" + id + "_collapse'>" + section['course'] + "</a>";
+            panel_head.appendChild(panel_title);
+            var panel = document.createElement('div');
+            panel.setAttribute('class', 'panel-collapse collapse');
+            panel.setAttribute('id', id + '_collapse');
+            var panel_body = document.createElement('div');
+            panel_body.setAttribute('class', 'panel-body');
+            panel.appendChild(panel_body);
+            
             var course_p = document.createElement('p');
             course_p.innerHTML = "<h4><b>" + section['course'] + "</b></h4>";
 
@@ -227,17 +241,20 @@ function add_section(id){
             requirements_p.innerHTML = "<b>Requirements:</b> " + section['requirements'];
 
             var remove_a = document.createElement('a');
-            remove_a.setAttribute('onclick', 'remove_course(this.parentElement.id)');
+            remove_a.setAttribute('onclick', 'remove_course(this.parentElement.parentElement.parentElement.id)');
             remove_a.setAttribute('href', 'javascript:;');
             remove_a.innerHTML = "Remove";
 
-            section_data.appendChild(course_p);
-            section_data.appendChild(instructor_p);
-            section_data.appendChild(section_p);
-            section_data.appendChild(room_p);
-            section_data.appendChild(overview_p);
-            section_data.appendChild(requirements_p);
-            section_data.appendChild(remove_a);
+            panel_body.appendChild(course_p);
+            panel_body.appendChild(instructor_p);
+            panel_body.appendChild(section_p);
+            panel_body.appendChild(room_p);
+            panel_body.appendChild(overview_p);
+            panel_body.appendChild(requirements_p);
+            panel_body.appendChild(remove_a);
+
+            section_data.appendChild(panel_head);
+            section_data.appendChild(panel);
 
             // Append the course
             document.getElementById("cart").appendChild(section_data);

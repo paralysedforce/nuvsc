@@ -3,10 +3,10 @@
 <b>TODO:</b>
 
 <ol>
-    <li>Update section data so that rooms are strings, not ids</li>
-    <li>Make shopping cart an accordion</li>
     <li>do something with course_components (discussion sections, etc)</li>
+    <li>do something with descriptions</li>
     <li>security check</li>
+    <li>turn debug mode off</li>
     <li>place on web</li>
     <li>calendar conflict course color</li>
     <li>user login and save functionality</li>

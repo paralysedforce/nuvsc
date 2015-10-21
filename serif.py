@@ -5,6 +5,8 @@ import json
 from nuapiclient import NorthwesternAPIClient
 import nuapiclient_key as api_key
 
+import urllib2
+
 
 def convertDaysToDOW(section_str):
     if section_str == None:
@@ -138,7 +140,7 @@ def update_courses():
                         pass
 
 def update_sections():
-    old_ids = [x['id'] for x in query_db("SELECT id FROM descriptions ORDER BY id ASC")]
+    old_ids = [x['id'] for x in query_db("SELECT id FROM sections ORDER BY id ASC")]
 
     subject_symbols = [x['symbol'] for x in query_db("SELECT symbol FROM subjects")]
 
@@ -189,8 +191,9 @@ def update_sections():
                         db.execute("INSERT INTO sections VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", vals)
                         db.commit()
                     except sqlite3.IntegrityError:
-                        print new_section['id']
+                        pass
 
+#TODO Change to update method
 def initialize_descriptions():
     subject_symbols = [x['symbol'] for x in query_db("SELECT symbol FROM subjects")]
 
@@ -216,6 +219,7 @@ def initialize_descriptions():
         db.execute("INSERT INTO descriptions VALUES (?, ?, ?)", vals)
         db.commit()
 
+#TODO Change to update method
 def initialize_components():
     subject_symbols = [x['symbol'] for x in query_db("SELECT symbol FROM subjects")]
 
@@ -249,7 +253,7 @@ def initialize_components():
         db.execute("INSERT INTO components VALUES (?, ?, ?, ?, ?, ?, ?)", vals)
         db.commit()
 
-# UNUSED
+# UNUSED, test later (Takes almost 5000 api requests!)
 def initialize_rooms():
     room_ids = [x['room'] for x in query_db("SELECT room FROM sections")]
 
@@ -284,6 +288,20 @@ def initialize_rooms():
         db.execute("INSERT INTO rooms VALUES (?, ?, ?, ?, ?)", vals)
         db.commit()
 
+def update_rooms():
+    ids = query_db("SELECT id FROM sections")
+    for iden in ids:
+        try:
+            course = client.courses_details(id = iden['id'])[0]
+            if course['room'] is None:
+                room_val = ""
+            else:
+                room_val = course['room']['building_name'] + " " + course['room']['name']
+            db = get_db()
+            db.execute("UPDATE sections SET room=? WHERE id=?", [room_val, iden['id']])
+            db.commit()
+        except urllib2.URLError:
+            pass
 
 @app.route('/')
 def index():
