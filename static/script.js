@@ -209,8 +209,8 @@ function add_section(id){
         $.get("/descriptions/" + id, function(descriptions_data){
             $.get("/components/" + id, function(components_data){
 
-                var components = parseTextList(components_data)[0];
-                if (components != ""){
+                if (components_data != "{}"){
+                    var components = parseTextList(components_data)[0];
                     var components_link = document.getElementById(id);
                     var comp_panel = document.createElement('div');
                     comp_panel.setAttribute('class', 'panel panel-default');

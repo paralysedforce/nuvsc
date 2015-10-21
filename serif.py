@@ -408,7 +408,7 @@ def components(section_id):
     components = query_db("SELECT component, dow, start_time, end_time, section, room FROM components WHERE id=?", [section_id])
     comp_dict = {}
     for i in range(len(components)):
-        comp_dict['comp' + str(i)] = components[i]['component'] + " " + convertDaysToDOW(components[i]['dow']) + " " + components[i]['start_time'] + "-" + components[i]['end_time'] + " Section " + components[i]['section'] + " " + components[i]['room']
+        comp_dict['comp' + str(i)] = components[i]['component'] + " " + convertDOWToDays(components[i]['dow'])+ " " + components[i]['start_time'] + "-" + components[i]['end_time'] + " Section " + components[i]['section'] + " " + components[i]['room']
     return json.dumps(comp_dict)
 
 @app.route('/all_sections')
