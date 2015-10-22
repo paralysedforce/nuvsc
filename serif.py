@@ -411,6 +411,22 @@ def components(section_id):
         comp_dict['comp' + str(i)] = components[i]['component'] + " " + convertDOWToDays(components[i]['dow'])+ " " + components[i]['start_time'] + "-" + components[i]['end_time'] + " Section " + components[i]['section'] + " " + components[i]['room']
     return json.dumps(comp_dict)
 
+@app.route('/component/<full_name>/section/<int:section_id>')
+def component(full_name, section_id):
+    all_comps = query_db("SELECT component, dow, start_time, end_time, section, room FROM components")
+    section = query_db("SELECT course FROM sections WHERE id = ?", [int(section_id)])[0]
+    comp_dict = {}
+    for comp in all_comps:
+        if comp['component'] + " " + convertDOWToDays(comp['dow'])+ " " + comp['start_time'] + "-" + comp['end_time'] + " Section " + comp['section'] + " " + comp['room'] == full_name:
+            comp_dict['component'] = comp['component']
+            comp_dict['dow'] = comp['dow']
+            comp_dict['start_time'] = comp['start_time']
+            comp_dict['end_time'] = comp['end_time']
+            comp_dict['section'] = comp['section']
+            comp_dict['room'] = comp['room']
+            comp_dict['course'] = section['course']
+            return json.dumps(comp_dict)
+
 @app.route('/all_sections')
 def all_sections():
     sections_list = []

@@ -206,6 +206,9 @@ function add_section_visual(id){
             comp_panel.appendChild(comp_body);
             for (var key in components){
                 var comp_link = document.createElement('a');
+                comp_link.setAttribute('href', 'javascript:;');
+                var func_str = "add_component('" + components[key] + "', " + id + ")";
+                comp_link.setAttribute('onclick', func_str);
                 comp_link.innerHTML = components[key];
                 comp_body.appendChild(comp_link);
             }
@@ -213,6 +216,47 @@ function add_section_visual(id){
         }
     });
     add_section(id);
+}
+
+function add_component(full_name, id){
+    $.get("/component/" + full_name + "/section/" + id, function(comp_data){
+        var comp = parseTextList(comp_data)[0];
+
+        var start_formatted = "2015-10-09" + 'T' + comp['start_time'] + ':00';
+        var end_formatted = "2015-10-09" + 'T' + comp['end_time'] + ':00';
+
+        // Adding course to calendar
+        if (comp['dow'] != '[]'){
+            var comp_event = {
+                title: comp['course'],
+                id: id + '_comp',
+                //TODO add start and end date functionality
+                start: start_formatted,
+                end: end_formatted,
+                component: comp['component'],
+                dow: comp['dow'],
+                section: comp['section'],
+                room: comp['room']
+            }
+            $('#calendar').fullCalendar('renderEvent', comp_event, 'stick');
+        }
+
+        // Increment hours per week
+        var start = new Date(start_formatted);
+        var end = new Date(end_formatted);
+        var min = (end - start) / 60000;
+        // in case of unscheduled courses
+        if (isNaN(min)){
+            min = 0;
+        }
+        if (min % 30 == 20){
+            min += 10;
+        }
+        var hr = parseFloat(min) / 60;
+        var days = $('#calendar').fullCalendar('clientEvents', idOrFilter = id + '_comp').length;
+        var old_hr = parseFloat(document.getElementById("course_hours").innerHTML);
+        document.getElementById("course_hours").innerHTML = old_hr + hr * days;
+    });
 }
 
 function add_section(id){
@@ -225,140 +269,139 @@ function add_section(id){
         }
     }
 
-    // Adding info to cart
     $.get("/section/" + id, function(section_request_data){
         $.get("/descriptions/" + id, function(descriptions_data){
+            // Adding info to cart
+            // Create containing div
+            var section_data = document.createElement('div');
+            section_data.setAttribute('class', 'section_cart panel panel-default');
+            section_data.setAttribute('id', id);
 
-                // Create containing div
-                var section_data = document.createElement('div');
-                section_data.setAttribute('class', 'section_cart panel panel-default');
-                section_data.setAttribute('id', id);
+            // Populate div with content
+            var section = parseTextList(section_request_data)[0];
 
-                // Populate div with content
-                var section = parseTextList(section_request_data)[0];
+            // Create panel heading and panel
+            var panel_head = document.createElement('div');
+            panel_head.setAttribute('class', 'panel-heading');
+            var panel_title = document.createElement('h4');
+            panel_title.setAttribute('class', 'panel-title');
+            panel_title.innerHTML = "<a data-toggle='collapse' href='#" + id + "_collapse'>" + section['course'] + "</a>";
+            panel_head.appendChild(panel_title);
+            var panel = document.createElement('div');
+            panel.setAttribute('class', 'panel-collapse collapse');
+            panel.setAttribute('id', id + '_collapse');
+            var panel_body = document.createElement('div');
+            panel_body.setAttribute('class', 'panel-body');
+            panel.appendChild(panel_body);
+            
+            var course_p = document.createElement('p');
+            course_p.innerHTML = "<h4><b>" + section['course'] + "</b></h4>";
 
-                // Create panel heading and panel
-                var panel_head = document.createElement('div');
-                panel_head.setAttribute('class', 'panel-heading');
-                var panel_title = document.createElement('h4');
-                panel_title.setAttribute('class', 'panel-title');
-                panel_title.innerHTML = "<a data-toggle='collapse' href='#" + id + "_collapse'>" + section['course'] + "</a>";
-                panel_head.appendChild(panel_title);
-                var panel = document.createElement('div');
-                panel.setAttribute('class', 'panel-collapse collapse');
-                panel.setAttribute('id', id + '_collapse');
-                var panel_body = document.createElement('div');
-                panel_body.setAttribute('class', 'panel-body');
-                panel.appendChild(panel_body);
-                
-                var course_p = document.createElement('p');
-                course_p.innerHTML = "<h4><b>" + section['course'] + "</b></h4>";
+            var section_p = document.createElement('p');
+            section_p.innerHTML = "Section " + section['section'];
+            
+            var instructor_p = document.createElement('p');
+            instructor_p.innerHTML = section['instructor'];
 
-                var section_p = document.createElement('p');
-                section_p.innerHTML = "Section " + section['section'];
-                
-                var instructor_p = document.createElement('p');
-                instructor_p.innerHTML = section['instructor'];
+            var room_p = document.createElement('p');
+            room_p.innerHTML = section['room'];
 
-                var room_p = document.createElement('p');
-                room_p.innerHTML = section['room'];
+            var overview_p = document.createElement('p');
+            overview_p.innerHTML = "<b>Overview:</b> " + section['overview'];
 
-                var overview_p = document.createElement('p');
-                overview_p.innerHTML = "<b>Overview:</b> " + section['overview'];
+            var requirements_p = document.createElement('p');
+            requirements_p.innerHTML = "<b>Requirements:</b> " + section['requirements'];
 
-                var requirements_p = document.createElement('p');
-                requirements_p.innerHTML = "<b>Requirements:</b> " + section['requirements'];
+            var remove_a = document.createElement('a');
+            remove_a.setAttribute('onclick', 'remove_course(this.parentElement.parentElement.parentElement.id)');
+            remove_a.setAttribute('href', 'javascript:;');
+            remove_a.innerHTML = "Remove";
 
-                var remove_a = document.createElement('a');
-                remove_a.setAttribute('onclick', 'remove_course(this.parentElement.parentElement.parentElement.id)');
-                remove_a.setAttribute('href', 'javascript:;');
-                remove_a.innerHTML = "Remove";
+            panel_body.appendChild(course_p);
+            panel_body.appendChild(instructor_p);
+            panel_body.appendChild(section_p);
+            panel_body.appendChild(room_p);
+            panel_body.appendChild(overview_p);
+            panel_body.appendChild(requirements_p);
 
-                panel_body.appendChild(course_p);
-                panel_body.appendChild(instructor_p);
-                panel_body.appendChild(section_p);
-                panel_body.appendChild(room_p);
-                panel_body.appendChild(overview_p);
-                panel_body.appendChild(requirements_p);
+            descriptions = parseTextList(descriptions_data)[0];
 
-                descriptions = parseTextList(descriptions_data)[0];
-
-                if (descriptions != "") {
-                    var descriptions_link = document.createElement('a');
-                    descriptions_link.setAttribute('role', 'button');
-                    descriptions_link.setAttribute('data-toggle', 'collapse');
-                    descriptions_link.setAttribute('data-target', '#' + id + '_descriptions');
-                    descriptions_link.innerHTML = "Toggle More Descriptions";
-                    var descriptions_div = document.createElement('div');
-                    descriptions_div.setAttribute('class', 'collapse');
-                    descriptions_div.setAttribute('id', id + '_descriptions');
-                    for (var key in descriptions){
-                        var desc_name = document.createElement('b');
-                        desc_name.innerHTML = key;
-                        descriptions_div.appendChild(desc_name);
-                        var desc_desc = document.createElement('p');
-                        desc_desc.innerHTML = descriptions[key];
-                        descriptions_div.appendChild(desc_desc);
-                    }
-                    panel_body.appendChild(descriptions_link);
-                    panel_body.appendChild(descriptions_div);
+            if (descriptions != "") {
+                var descriptions_link = document.createElement('a');
+                descriptions_link.setAttribute('role', 'button');
+                descriptions_link.setAttribute('data-toggle', 'collapse');
+                descriptions_link.setAttribute('data-target', '#' + id + '_descriptions');
+                descriptions_link.innerHTML = "Toggle More Descriptions";
+                var descriptions_div = document.createElement('div');
+                descriptions_div.setAttribute('class', 'collapse');
+                descriptions_div.setAttribute('id', id + '_descriptions');
+                for (var key in descriptions){
+                    var desc_name = document.createElement('b');
+                    desc_name.innerHTML = key;
+                    descriptions_div.appendChild(desc_name);
+                    var desc_desc = document.createElement('p');
+                    desc_desc.innerHTML = descriptions[key];
+                    descriptions_div.appendChild(desc_desc);
                 }
+                panel_body.appendChild(descriptions_link);
+                panel_body.appendChild(descriptions_div);
+            }
 
-                panel_body.appendChild(document.createElement('br'));
-                panel_body.appendChild(remove_a);
+            panel_body.appendChild(document.createElement('br'));
+            panel_body.appendChild(remove_a);
 
-                section_data.appendChild(panel_head);
-                section_data.appendChild(panel);
+            section_data.appendChild(panel_head);
+            section_data.appendChild(panel);
 
-                // Append the course
-                document.getElementById("cart").appendChild(section_data);
+            // Put the course in the cart
+            document.getElementById("cart").appendChild(section_data);
 
-                var start_formatted = "2015-10-09" + 'T' + section['start_time'] + ':00';
-                var end_formatted = "2015-10-09" + 'T' + section['end_time'] + ':00';
+            var start_formatted = "2015-10-09" + 'T' + section['start_time'] + ':00';
+            var end_formatted = "2015-10-09" + 'T' + section['end_time'] + ':00';
 
-                // Adding course to calendar
-                if (section['dow'] == '[]'){
-                    var unscheduled_section = document.createElement('div');
-                    unscheduled_section.setAttribute('id', id);
-                    unscheduled_section.innerHTML = "<p>" + section['course'] + "</p>";
-                    document.getElementById("unscheduled").appendChild(unscheduled_section);
+            // Adding course to calendar
+            if (section['dow'] == '[]'){
+                var unscheduled_section = document.createElement('div');
+                unscheduled_section.setAttribute('id', id);
+                unscheduled_section.innerHTML = "<p>" + section['course'] + "</p>";
+                document.getElementById("unscheduled").appendChild(unscheduled_section);
+            }
+            else {
+                var section_event = {
+                    title: section['course'],
+                    id: id,
+                    //TODO add start and end date functionality
+                    start: start_formatted,
+                    end: end_formatted,
+                    dow: section['dow'],
+                    section: section['section'],
+                    instructor: section['instructor'],
+                    room: section['room'],
+                    overview: section['overview'],
+                    requirements: section['requirements']
                 }
-                else {
-                    var section_event = {
-                        title: section['course'],
-                        id: id,
-                        //TODO add start and end date functionality
-                        start: start_formatted,
-                        end: end_formatted,
-                        dow: section['dow'],
-                        section: section['section'],
-                        instructor: section['instructor'],
-                        room: section['room'],
-                        overview: section['overview'],
-                        requirements: section['requirements']
-                    }
-                    $('#calendar').fullCalendar('renderEvent', section_event, 'stick');
-                }
+                $('#calendar').fullCalendar('renderEvent', section_event, 'stick');
+            }
 
-                // Increment number of courses
-                var num = parseInt(document.getElementById("number_of_courses").innerHTML) + 1;
-                document.getElementById("number_of_courses").innerHTML = num;
+            // Increment number of courses
+            var num = parseInt(document.getElementById("number_of_courses").innerHTML) + 1;
+            document.getElementById("number_of_courses").innerHTML = num;
 
-                // Increment hours per week
-                var start = new Date(start_formatted);
-                var end = new Date(end_formatted);
-                var min = (end - start) / 60000;
-                // in case of unscheduled courses
-                if (isNaN(min)){
-                    min = 0;
-                }
-                if (min % 30 == 20){
-                    min += 10;
-                }
-                var hr = parseFloat(min) / 60;
-                var days = $('#calendar').fullCalendar('clientEvents', idOrFilter = id).length;
-                var old_hr = parseFloat(document.getElementById("course_hours").innerHTML);
-                document.getElementById("course_hours").innerHTML = old_hr + hr * days;
+            // Increment hours per week
+            var start = new Date(start_formatted);
+            var end = new Date(end_formatted);
+            var min = (end - start) / 60000;
+            // in case of unscheduled courses
+            if (isNaN(min)){
+                min = 0;
+            }
+            if (min % 30 == 20){
+                min += 10;
+            }
+            var hr = parseFloat(min) / 60;
+            var days = $('#calendar').fullCalendar('clientEvents', idOrFilter = id).length;
+            var old_hr = parseFloat(document.getElementById("course_hours").innerHTML);
+            document.getElementById("course_hours").innerHTML = old_hr + hr * days;
         });
     });
 }
@@ -436,7 +479,11 @@ $(document).ready(function(){
         eventRender: function(event, element){
             element[0].setAttribute('data-toggle', 'popover');
             element[0].setAttribute('title', "<b>" + event.title + "</b>");
-            element[0].setAttribute('data-content', "Section " + event.section + "<br>" + event.instructor + "<br><a onclick='remove_course(" + event.id + ")' href='javascript:;'>Remove</a>");
+            if (event.instructor == undefined){
+                element[0].setAttribute('data-content', "Section " + event.section + "<br>" + event.component + "<br><a onclick='remove_course(" + event.id + ")' href='javascript:;'>Remove</a>");
+            } else {
+                element[0].setAttribute('data-content', "Section " + event.section + "<br>" + event.instructor + "<br><a onclick='remove_course(" + event.id + ")' href='javascript:;'>Remove</a>");
+            }
             // Make sure it stays open when you move your mouse over to it
             $(element[0]).popover({
                 animation: false,
