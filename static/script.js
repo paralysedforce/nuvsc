@@ -208,15 +208,17 @@ function add_section_visual(id){
                 var comp_link = document.createElement('a');
                 comp_link.setAttribute('id', components[key]);
                 comp_link.setAttribute('href', 'javascript:;');
+                comp_link.style.display = 'block';
                 var func_str = "add_component('" + components[key] + "', " + id + ")";
                 comp_link.setAttribute('onclick', func_str);
                 comp_link.innerHTML = components[key];
                 comp_body.appendChild(comp_link);
             }
             insertAfter(comp_panel, section_link);
+        } else {
+            add_section(id);
         }
     });
-    add_section(id);
 }
 
 function add_component(full_name, id){
@@ -233,7 +235,7 @@ function add_component(full_name, id){
         if (comp['dow'] != '[]'){
             var comp_event = {
                 title: comp['course'],
-                id: id + '_comp',
+                id: id,
                 //TODO add start and end date functionality
                 start: start_formatted,
                 end: end_formatted,
@@ -245,21 +247,7 @@ function add_component(full_name, id){
             $('#calendar').fullCalendar('renderEvent', comp_event, 'stick');
         }
 
-        // Increment hours per week
-        var start = new Date(start_formatted);
-        var end = new Date(end_formatted);
-        var min = (end - start) / 60000;
-        // in case of unscheduled courses
-        if (isNaN(min)){
-            min = 0;
-        }
-        if (min % 30 == 20){
-            min += 10;
-        }
-        var hr = parseFloat(min) / 60;
-        var days = $('#calendar').fullCalendar('clientEvents', idOrFilter = id + '_comp').length;
-        var old_hr = parseFloat(document.getElementById("course_hours").innerHTML);
-        document.getElementById("course_hours").innerHTML = old_hr + hr * days;
+        add_section(id);
     });
 }
 
@@ -392,47 +380,51 @@ function add_section(id){
             document.getElementById("number_of_courses").innerHTML = num;
 
             // Increment hours per week
-            var start = new Date(start_formatted);
-            var end = new Date(end_formatted);
-            var min = (end - start) / 60000;
-            // in case of unscheduled courses
-            if (isNaN(min)){
-                min = 0;
+            var total_hrs = 0;
+            var cal_events = $('#calendar').fullCalendar('clientEvents', idOrFilter = id);
+            for (var j = 0; j < cal_events.length; j++){
+                var start = cal_events[j]['start'].toDate();
+                var end = cal_events[j]['end'].toDate();
+                var min = (end - start) / 60000;
+                // in case of unscheduled courses
+                if (isNaN(min)){
+                    min = 0;
+                }
+                if (min % 30 == 20){
+                    min += 10;
+                }
+                total_hrs += parseFloat(min) / 60;
             }
-            if (min % 30 == 20){
-                min += 10;
-            }
-            var hr = parseFloat(min) / 60;
-            var days = $('#calendar').fullCalendar('clientEvents', idOrFilter = id).length;
             var old_hr = parseFloat(document.getElementById("course_hours").innerHTML);
-            document.getElementById("course_hours").innerHTML = old_hr + hr * days;
+            document.getElementById("course_hours").innerHTML = old_hr + total_hrs;
         });
     });
 }
 
-function remove_course(id){
-    // Decrement hrs / wk
-    var calendar_event = $('#calendar').fullCalendar('clientEvents', idOrFilter = id);
-    var days = calendar_event.length;
-    var start_moment = calendar_event[0].start;
-    var end_moment = calendar_event[0].end;
-    var start = start_moment['_d'];
-    var end = end_moment['_d'];
-    var min = (end - start) / 60000;
-    // in case of unscheduled courses
-    if (isNaN(min)){
-        min = 0;
+function decrement_hrs(id){
+    var total_hrs = 0;
+    var cal_events = $('#calendar').fullCalendar('clientEvents', idOrFilter = id);
+    for (var j = 0; j < cal_events.length; j++){
+        var start = cal_events[j]['start'].toDate();
+        var end = cal_events[j]['end'].toDate();
+        var min = (end - start) / 60000;
+        // in case of unscheduled courses
+        if (isNaN(min)){
+            min = 0;
+        }
+        if (min % 30 == 20){
+            min += 10;
+        }
+        total_hrs += parseFloat(min) / 60;
     }
-    if (min % 30 == 20){
-        min += 10;
-    }
-    var hr = parseFloat(min) / 60;
     var old_hr = parseFloat(document.getElementById("course_hours").innerHTML);
-    document.getElementById("course_hours").innerHTML = old_hr - hr * days;
-    
+    document.getElementById("course_hours").innerHTML = old_hr - total_hrs;
+}
+
+function remove_course(id){
+    decrement_hrs(id);
     // Remove event from calendar
     $('#calendar').fullCalendar('removeEvents', idOrFilter = id);
-    $('#calendar').fullCalendar('removeEvents', idOrFilter = id + '_comp');
     // Remove event from cart
     var children = document.getElementById("cart").children;
     for (var i = 0; i < children.length; i++){
