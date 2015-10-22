@@ -3,7 +3,6 @@
 <b>TODO:</b>
 
 <ol>
-    <li>do something with course_components (discussion sections, etc)</li>
     <li>security check</li>
     <li>turn debug mode off</li>
     <li>place on web</li>
