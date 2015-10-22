@@ -191,8 +191,8 @@ function add_section_visual(id){
     if (section_link.getAttribute('class') == 'section_link'){
         section_link.style.color = 'red';
     }
-    $.get("/components/" + id, function(components_data){
 
+    $.get("/components/" + id, function(components_data){
         if (components_data != "{}"){
             var components = parseTextList(components_data)[0];
             var comp_panel = document.createElement('div');
@@ -206,6 +206,7 @@ function add_section_visual(id){
             comp_panel.appendChild(comp_body);
             for (var key in components){
                 var comp_link = document.createElement('a');
+                comp_link.setAttribute('id', components[key]);
                 comp_link.setAttribute('href', 'javascript:;');
                 var func_str = "add_component('" + components[key] + "', " + id + ")";
                 comp_link.setAttribute('onclick', func_str);
@@ -219,6 +220,9 @@ function add_section_visual(id){
 }
 
 function add_component(full_name, id){
+    var comp_link = document.getElementById(full_name);
+    comp_link.style.color = 'red';
+
     $.get("/component/" + full_name + "/section/" + id, function(comp_data){
         var comp = parseTextList(comp_data)[0];
 
@@ -428,6 +432,7 @@ function remove_course(id){
     
     // Remove event from calendar
     $('#calendar').fullCalendar('removeEvents', idOrFilter = id);
+    $('#calendar').fullCalendar('removeEvents', idOrFilter = id + '_comp');
     // Remove event from cart
     var children = document.getElementById("cart").children;
     for (var i = 0; i < children.length; i++){
