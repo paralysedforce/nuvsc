@@ -221,6 +221,35 @@ function add_section_visual(id){
     });
 }
 
+function add_section_search(id){
+    $.get("/components/" + id, function(components_data){
+        if (components_data != "{}"){
+            // clear modal
+            var modal_ul = document.getElementById('modal_ul');
+            var modal_children = modal_ul.children;
+            while (modal_ul.firstChild){
+                modal_ul.removeChild(modal_ul.firstChild);
+            }
+            // Set modal title
+            document.getElementById('modal_title').innerHTML = "Choose a component:";
+
+            var components = parseTextList(components_data)[0];
+            for (var key in components){
+                var comp_link = document.createElement('a');
+                comp_link.setAttribute('id', components[key]);
+                comp_link.setAttribute('href', 'javascript:;');
+                comp_link.style.display = 'block';
+                var func_str = "add_component('" + components[key] + "', " + id + ")";
+                comp_link.setAttribute('onclick', func_str);
+                comp_link.innerHTML = components[key];
+            }
+            document.getElementById('modal_ul').appendChild(comp_link);
+        } else {
+            add_section(id);
+        }
+    });
+}
+
 function add_component(full_name, id){
     var comp_link = document.getElementById(full_name);
     comp_link.style.color = 'red';
@@ -504,23 +533,22 @@ $(document).ready(function(){
     });
 
     // Load search box
-    var xhttp = new XMLHttpRequest();
-    xhttp.onreadystatechange = function(){
-        if (xhttp.readyState == 4 && xhttp.status == 200){
-            var search_list = parseTextList(xhttp.responseText);
+    $.get("/all_sections", function(all_sections_data){
+        var search_list = parseTextList(all_sections_data);
 
-            $("#autocomplete").autocomplete({
-                source: search_list,
-                autoFocus: true,
-                select: function(event, ui){
-                    add_section(ui.item.id);
-                }
-            }).autocomplete("instance")._renderItem = function(ul, item){
-                return $("<li>").append("<a>" + item.label + "<br>" + item.desc + " " + item.instructor + "</a>").appendTo(ul);
-            };
-        }
-    }
-    xhttp.open("GET", '/all_sections', true);
-    xhttp.send();
-
+        $("#autocomplete").autocomplete({
+            source: search_list,
+            autoFocus: true,
+            select: function(event, ui){
+                add_section_search(ui.item.id);
+                $.get("/components/" + ui.item.id, function(components_data){
+                    if (components_data != "{}"){
+                        $('#sections_modal').modal('show')
+                    }
+                });
+            }
+        }).autocomplete("instance")._renderItem = function(ul, item){
+            return $("<li>").append("<a>" + item.label + "<br>" + item.desc + " " + item.instructor + "</a>").appendTo(ul);
+        };
+    });
 });
