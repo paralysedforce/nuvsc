@@ -1,9 +1,10 @@
+import os
 import sqlite3
 from flask import Flask, render_template, url_for, g
 
 import json
 from nuapiclient import NorthwesternAPIClient
-import nuapiclient_key as api_key
+#import nuapiclient_key as api_key
 
 import urllib2
 
@@ -39,7 +40,8 @@ DATABASE = 'cache.db'
 app = Flask(__name__)
 app.config.from_object(__name__)
 
-client = NorthwesternAPIClient(api_key.NUAPICLIENT_KEY)
+#client = NorthwesternAPIClient(api_key.NUAPICLIENT_KEY)
+client = NorthwesternAPIClient(os.environ['NUAPICLIENT_KEY'])
 
 
 def connect_db():
