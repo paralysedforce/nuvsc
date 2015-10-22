@@ -2,7 +2,7 @@ import sqlite3
 from flask import Flask, render_template, url_for, g
 
 import json
-#from nuapiclient import NorthwesternAPIClient
+from nuapiclient import NorthwesternAPIClient
 import nuapiclient_key as api_key
 
 import urllib2
