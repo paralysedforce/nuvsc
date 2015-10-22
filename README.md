@@ -3,11 +3,9 @@
 <b>TODO:</b>
 
 <ol>
-    <li>security check</li>
-    <li>turn debug mode off</li>
-    <li>place on web</li>
     <li>add remove button to header of cart collapsible panels</li>
     <li>calendar conflict course color</li>
+    <li>favicon</li>
     <li>user login and save functionality</li>
     <li>Travel time warning</li>
     <li>Make the calendar event start and stop on term dates instead of infinitely repeating</li>
