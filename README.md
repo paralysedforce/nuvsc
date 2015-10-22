@@ -3,6 +3,8 @@
 <b>TODO:</b>
 
 <ol>
+    <li>fix back to top divs accumulating</li>
+    <li>analytics</li>
     <li>add remove button to header of cart collapsible panels</li>
     <li>calendar conflict course color</li>
     <li>favicon</li>
