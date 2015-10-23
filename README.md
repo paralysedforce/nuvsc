@@ -3,9 +3,9 @@
 <b>TODO:</b>
 
 <ol>
-    <li>security check</li>
-    <li>turn debug mode off</li>
-    <li>place on web</li>
+	<li>Do not allow addition of more than one component per section</li>
+	<li>fix back to top divs accumulating</li>
+    <li>analytics</li>
     <li>add remove button to header of cart collapsible panels</li>
     <li>calendar conflict course color</li>
     <li>user login and save functionality</li>
