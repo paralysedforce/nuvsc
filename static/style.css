@@ -50,6 +50,10 @@ ul {
     min-height: 100px;
 }
 
+.panel-title h4 {
+	display: inline;
+}
+
 .info_headings {
     display: inline;
 }

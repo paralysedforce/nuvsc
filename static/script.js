@@ -46,41 +46,35 @@ function show_subjects(input){
     $('.school_box').css({'display':'none'});
     current_school = input.getAttribute('id');
 
-    var xhttp = new XMLHttpRequest();
-    xhttp.onreadystatechange = function(){
-        if (xhttp.readyState == 4 && xhttp.status == 200){
-            // Back link
-            var back = document.createElement('div');
-            back.setAttribute('class', 'subject_box');
-            //TODO change this to creating a button using javascript then appending child
-            back.innerHTML = "<button type='button' class='btn btn-default btn-sm' onclick='back(this)'>Back</button>";
-            document.getElementById("visual_course_finder").appendChild(back);
-            $('#visual_course_finder').append("<br class='subject_box'>");
-            // Generate subject links
-            var subjects = xhttp.responseText;
-            var subjects_list = JSON.parse(subjects);
-            for (var i = 0; i < subjects_list.length; i++){
-                var subject_box = document.createElement('div');
-                subject_box.setAttribute('class', 'subject_box');
-                subject_box.setAttribute('id', subjects_list[i]['symbol']);
-                subject_box.innerHTML = "<button type='button' class='btn btn-primary btn-xs btn-block subject_btn' onclick='show_courses(this)'>" + subjects_list[i]['name'] + "</button>";
-                document.getElementById("visual_course_finder").appendChild(subject_box);
-            }
-            var btt_div = document.createElement('div');
-            btt_div.setAttribute('class', 'back_to_top');
-            // Back to top button
-            var back_to_top = document.createElement('a');
-            back_to_top.setAttribute('class', 'btn btn-default btn-xs subject_box');
-            back_to_top.setAttribute('href', '#');
-            back_to_top.setAttribute('role', 'button');
-            back_to_top.innerHTML = "Back to top";
-            
-            btt_div.appendChild(back_to_top);
-            document.getElementById("visual_course_finder").appendChild(btt_div);
-        }
-    }
-    xhttp.open("GET", "/subjects/" + current_school, true);
-    xhttp.send();
+    $.get("/subjects/" + current_school, function(subjects){
+		// Back link
+		var back = document.createElement('div');
+		back.setAttribute('class', 'subject_box');
+		//TODO change this to creating a button using javascript then appending child
+		back.innerHTML = "<button type='button' class='btn btn-default btn-sm' onclick='back(this)'>Back</button>";
+		document.getElementById("visual_course_finder").appendChild(back);
+		$('#visual_course_finder').append("<br class='subject_box'>");
+		// Generate subject links
+		var subjects_list = JSON.parse(subjects);
+		for (var i = 0; i < subjects_list.length; i++){
+			var subject_box = document.createElement('div');
+			subject_box.setAttribute('class', 'subject_box');
+			subject_box.setAttribute('id', subjects_list[i]['symbol']);
+			subject_box.innerHTML = "<button type='button' class='btn btn-primary btn-xs btn-block subject_btn' onclick='show_courses(this)'>" + subjects_list[i]['name'] + "</button>";
+			document.getElementById("visual_course_finder").appendChild(subject_box);
+		}
+		var btt_div = document.createElement('div');
+		btt_div.setAttribute('class', 'back_to_top subject_box');
+		// Back to top button
+		var back_to_top = document.createElement('a');
+		back_to_top.setAttribute('class', 'btn btn-default btn-xs');
+		back_to_top.setAttribute('href', '#');
+		back_to_top.setAttribute('role', 'button');
+		back_to_top.innerHTML = "Back to top";
+		
+		btt_div.appendChild(back_to_top);
+		document.getElementById("visual_course_finder").appendChild(btt_div);
+	});
 }
 
 function show_courses(input){
@@ -252,6 +246,10 @@ function add_section_search(id){
 
 function add_component(full_name, id){
     var comp_link = document.getElementById(full_name);
+	if (comp_link.style.color == 'red'){
+		window.alert("This course is already in your cart.");
+		return;
+	}
     comp_link.style.color = 'red';
 
     $.get("/component/" + full_name + "/section/" + id, function(comp_data){
@@ -304,46 +302,63 @@ function add_section(id){
             // Create panel heading and panel
             var panel_head = document.createElement('div');
             panel_head.setAttribute('class', 'panel-heading');
-            var panel_title = document.createElement('h4');
-            panel_title.setAttribute('class', 'panel-title');
-            panel_title.innerHTML = "<a data-toggle='collapse' href='#" + id + "_collapse'>" + section['course'] + "</a>";
-            panel_head.appendChild(panel_title);
+
+				var panel_title = document.createElement('h4');
+				panel_title.setAttribute('class', 'panel-title');
+				panel_title.innerHTML = "<a data-toggle='collapse' href='#" + id + "_collapse'>" + section['course'] + "</a>";
+				panel_head.appendChild(panel_title);
+
+				var panel_remove = document.createElement('button');
+				panel_remove.setAttribute('type', 'button');
+				panel_remove.style.float = 'right';
+				panel_remove.style.display = 'inline';
+				panel_remove.setAttribute('onclick', 'remove_course(this.parentElement.parentElement.id)');
+
+				var panel_remove_button = document.createElement('span');
+				panel_remove_button.setAttribute('class', 'icon-bar');
+				panel_remove.appendChild(panel_remove_button);
+				panel_remove.appendChild(panel_remove_button);
+				panel_remove.appendChild(panel_remove_button);
+
+			panel_head.appendChild(panel_remove);
+
             var panel = document.createElement('div');
             panel.setAttribute('class', 'panel-collapse collapse');
             panel.setAttribute('id', id + '_collapse');
-            var panel_body = document.createElement('div');
-            panel_body.setAttribute('class', 'panel-body');
-            panel.appendChild(panel_body);
-            
-            var course_p = document.createElement('p');
-            course_p.innerHTML = "<h4><b>" + section['course'] + "</b></h4>";
 
-            var section_p = document.createElement('p');
-            section_p.innerHTML = "Section " + section['section'];
-            
-            var instructor_p = document.createElement('p');
-            instructor_p.innerHTML = section['instructor'];
+				var panel_body = document.createElement('div');
+				panel_body.setAttribute('class', 'panel-body');
+				panel.appendChild(panel_body);
+				
+					var course_p = document.createElement('p');
+					course_p.innerHTML = "<h4><b>" + section['course'] + "</b></h4>";
 
-            var room_p = document.createElement('p');
-            room_p.innerHTML = section['room'];
+					var section_p = document.createElement('p');
+					section_p.innerHTML = "Section " + section['section'];
+					
+					var instructor_p = document.createElement('p');
+					instructor_p.innerHTML = section['instructor'];
 
-            var overview_p = document.createElement('p');
-            overview_p.innerHTML = "<b>Overview:</b> " + section['overview'];
+					var room_p = document.createElement('p');
+					room_p.innerHTML = section['room'];
 
-            var requirements_p = document.createElement('p');
-            requirements_p.innerHTML = "<b>Requirements:</b> " + section['requirements'];
+					var overview_p = document.createElement('p');
+					overview_p.innerHTML = "<b>Overview:</b> " + section['overview'];
 
-            var remove_a = document.createElement('a');
-            remove_a.setAttribute('onclick', 'remove_course(this.parentElement.parentElement.parentElement.id)');
-            remove_a.setAttribute('href', 'javascript:;');
-            remove_a.innerHTML = "Remove";
+					var requirements_p = document.createElement('p');
+					requirements_p.innerHTML = "<b>Requirements:</b> " + section['requirements'];
 
-            panel_body.appendChild(course_p);
-            panel_body.appendChild(instructor_p);
-            panel_body.appendChild(section_p);
-            panel_body.appendChild(room_p);
-            panel_body.appendChild(overview_p);
-            panel_body.appendChild(requirements_p);
+					var remove_a = document.createElement('a');
+					remove_a.setAttribute('onclick', 'remove_course(this.parentElement.parentElement.parentElement.id)');
+					remove_a.setAttribute('href', 'javascript:;');
+					remove_a.innerHTML = "Remove";
+
+				panel_body.appendChild(course_p);
+				panel_body.appendChild(instructor_p);
+				panel_body.appendChild(section_p);
+				panel_body.appendChild(room_p);
+				panel_body.appendChild(overview_p);
+				panel_body.appendChild(requirements_p);
 
             descriptions = parseTextList(descriptions_data)[0];
 
