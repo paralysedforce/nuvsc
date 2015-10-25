@@ -4,8 +4,12 @@
 
 <ol>
     <li>analytics</li>
-    <li>add remove button to header of cart collapsible panels</li>
-	<li>close modal when component is clicked (or section, if no component)</li>
+	<li>Revise pages/README and start changelog</li>
+	<li>Change remove button to X</li>
+	<li>Deal with remove button when the title of header is too long</li>
+	<li>Deal with remove button when the title of header is two lines</li>
+	<li>Make a way to easily switch between sections of already selected class</li>
+	<li>Add data from other terms</li>
     <li>calendar conflict course color</li>
     <li>user login and save functionality</li>
     <li>Make the calendar event start and stop on term dates instead of infinitely repeating</li>

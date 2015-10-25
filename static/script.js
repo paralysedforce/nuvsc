@@ -441,6 +441,7 @@ function add_section(id){
             }
             var old_hr = parseFloat(document.getElementById("course_hours").innerHTML);
             document.getElementById("course_hours").innerHTML = old_hr + total_hrs;
+			$('#sections_modal').modal('hide')
         });
     });
 }
