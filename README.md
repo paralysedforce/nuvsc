@@ -1,23 +1,27 @@
 # Serif: A Visual Shopping Cart for Northwestern University
 
-<b>TODO:</b>
+What is it?
+------------------------------
+Serif is a web application designed to be the ultimate preparation tool for student schedule preparation at Northwestern. Originally constructed to combat CAESAR's inability to view the shopping cart in a weekly view, Serif is continually being developed to add more features that will help the student experience.
 
-<ol>
-    <li>Revise pages/README and start changelog</li>
-    <li>Change remove button to X</li>
-    <li>Deal with remove button when the title of header is too long</li>
-    <li>Deal with remove button when the title of header is two lines</li>
-    <li>Make a way to easily switch between sections of already selected class</li>
-    <li>Add data from other terms</li>
-    <li>calendar conflict course color</li>
-    <li>favicon</li>
-    <li>user login and save functionality</li>
-    <li>Make the calendar event start and stop on term dates instead of infinitely repeating</li>
-    <li>export to google calendar</li>
-    <li>Mike's panel instead of popup idea for sections (semitransparent all options)</li>
-    <li>Travel time warning</li>
-    <li>Search locally instead? Ask Istvan for clarification</li>
-    <li>search by distro field</li>
-    <li>search by instructor field</li>
-    <li>search by given criteria: subject(drop down/any), catalog_num(> or < or = or any), meeting days(checkboxes (required)), start time(drop down/any)</li>
-</ol>
+Serif is not intended to replace CAESAR - the enrollment of courses still must be done in CAESAR itself, not to mention the myriad of other functionality that CAESAR contains that is not related to scheduling (billing, emergency contact, etc). However, Serif should compliment and greatly ease the use of CAESAR for course enrollment, as it will allow students to find courses quickly and easily, create and compare multiple schedules, and more.
+
+If there is a feature that you would like to see added to Serif, or a functionality that you wish were different somehow, please send a note through the feedback form. This will help Serif become a better service for the students.
+
+The application is written in python (serverside) and javascript (clientside). The <a href='http://flask.pocoo.org/'>flask</a> api is used alongside <a href='http://getbootstrap.com/'>bootstrap</a> among other common packages such as jQuery UI. The data is taken from the <a href='http://developer.asg.northwestern.edu/'>Northwestern Course Data API</a> and is saved to a sqlite3 database (filename cache.db).
+
+Instructions
+------------------------------
+To run a local version of Serif, clone this repository. The python dependencies you'll need are: flask, <a href='https://github.com/northwesternapis/python-client'>nuapiclient</a>, and sqlite3. They can all be installed through pip. The clientside dependencies are: <a href='http://fullcalendar.io/'>fullcalendar</a>, jQuery UI, jQuery, and bootstrap. I recommend installing <a href='https://virtualenv.pypa.io/en/latest/'>virtualenv</a> and installing your pip dependencies that way.
+
+Latest Version
+------------------------------
+Beta - 1.0
+
+Author and Contact
+------------------------------
+Joon Park
+Junior, Northwestern University Class of '18
+B.A. Physics and B.M. Music Composition
+JoonPark2017@u.northwestern.edu
+<a href='http://joonparkmusic.com'>joonparkmusic.com</a>
