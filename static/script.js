@@ -303,24 +303,27 @@ function add_section(id){
             var panel_head = document.createElement('div');
             panel_head.setAttribute('class', 'panel-heading');
 
-				var panel_title = document.createElement('h4');
-				panel_title.setAttribute('class', 'panel-title');
-				panel_title.innerHTML = "<a data-toggle='collapse' href='#" + id + "_collapse'>" + section['course'] + "</a>";
-				panel_head.appendChild(panel_title);
+            var panel_row = document.createElement('div');
+            panel_row.setAttribute('class', 'row');
 
-				var panel_remove = document.createElement('button');
-				panel_remove.setAttribute('type', 'button');
-				panel_remove.style.float = 'right';
-				panel_remove.style.display = 'inline';
-				panel_remove.setAttribute('onclick', 'remove_course(this.parentElement.parentElement.id)');
+            panel_head.appendChild(panel_row);
 
-				var panel_remove_button = document.createElement('span');
-				panel_remove_button.setAttribute('class', 'icon-bar');
-				panel_remove.appendChild(panel_remove_button);
-				panel_remove.appendChild(panel_remove_button);
-				panel_remove.appendChild(panel_remove_button);
+                var panel_title = document.createElement('h4');
+                panel_title.setAttribute('class', 'panel-title col-md-11');
+                panel_title.innerHTML = "<a data-toggle='collapse' href='#" + id + "_collapse'>" + section['course'] + "</a>";
 
-			panel_head.appendChild(panel_remove);
+                panel_row.appendChild(panel_title);
+
+                var panel_remove = document.createElement('a');
+                panel_remove.setAttribute('class', 'col-md-1');
+                panel_remove.setAttribute('role', 'button');
+                panel_remove.setAttribute('onclick', 'remove_course(this.parentElement.parentElement.parentElement.id)');
+
+                var panel_remove_button = document.createElement('span');
+                panel_remove_button.setAttribute('class', 'glyphicon glyphicon-remove');
+                panel_remove.appendChild(panel_remove_button);
+
+                panel_row.appendChild(panel_remove);
 
             var panel = document.createElement('div');
             panel.setAttribute('class', 'panel-collapse collapse');
