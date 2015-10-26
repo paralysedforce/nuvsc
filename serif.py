@@ -307,7 +307,9 @@ def update_rooms():
 def index():
     term_name = query_db("SELECT MAX(id), name FROM terms")[0]['name']
     schools = query_db("SELECT symbol, name FROM schools")
+
     update_sections()
+
     return render_template('index.html', term = term_name, schools = schools)
 
 @app.route('/about')
