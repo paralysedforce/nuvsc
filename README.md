@@ -20,7 +20,7 @@ Beta - 1.0
 
 Author and Contact
 ------------------------------
-Joon Park
+Joon Park<br>
 Junior, Northwestern University Class of '18
 B.A. Physics and B.M. Music Composition
 JoonPark2017@u.northwestern.edu
