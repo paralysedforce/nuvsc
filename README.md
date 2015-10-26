@@ -16,7 +16,7 @@ To run a local version of Serif, clone this repository. The python dependencies 
 
 Latest Version
 ------------------------------
-Beta - 1.0
+Beta - 2.0
 
 Author and Contact
 ------------------------------
