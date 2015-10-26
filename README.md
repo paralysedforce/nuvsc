@@ -11,6 +11,7 @@
 	<li>Make a way to easily switch between sections of already selected class</li>
 	<li>Add data from other terms</li>
     <li>calendar conflict course color</li>
+    <li>favicon</li>
     <li>user login and save functionality</li>
     <li>Make the calendar event start and stop on term dates instead of infinitely repeating</li>
     <li>export to google calendar</li>
