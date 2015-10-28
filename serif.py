@@ -1,6 +1,6 @@
 import os
 import sqlite3
-from flask import Flask, render_template, url_for, g
+from flask import Flask, render_template, g
 
 import json
 from nuapiclient import NorthwesternAPIClient
@@ -38,7 +38,6 @@ DATABASE = 'cache.db'
 
 app = Flask(__name__)
 app.config.from_object(__name__)
-
 client = NorthwesternAPIClient(os.environ['NUAPICLIENT_KEY'])
 
 
@@ -151,7 +150,7 @@ def update_sections():
         sections = client.courses_details(term = term_id, subject = str(sub_symb))
         for section in sections:
             if section['room'] is None:
-                room_val = 0
+                room_val = ""
             else:
                 room_val = section['room']['building_name'] + " " + section['room']['name']
             new_sections.append(
@@ -307,6 +306,17 @@ def update_rooms():
 def index():
     term_name = query_db("SELECT MAX(id), name FROM terms")[0]['name']
     schools = query_db("SELECT symbol, name FROM schools")
+
+    """
+    temp = query_db("SELECT id, room FROM sections")
+    for pair in temp:
+        if pair['room'] == '0':
+            db = get_db()
+            db.execute("UPDATE sections SET room=? WHERE id=?", ["", pair['id']])
+            db.commit()
+    """
+            
+
     return render_template('index.html', term = term_name, schools = schools)
 
 @app.route('/about')
