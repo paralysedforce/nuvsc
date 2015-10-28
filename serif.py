@@ -306,17 +306,6 @@ def update_rooms():
 def index():
     term_name = query_db("SELECT MAX(id), name FROM terms")[0]['name']
     schools = query_db("SELECT symbol, name FROM schools")
-
-    """
-    temp = query_db("SELECT id, room FROM sections")
-    for pair in temp:
-        if pair['room'] == '0':
-            db = get_db()
-            db.execute("UPDATE sections SET room=? WHERE id=?", ["", pair['id']])
-            db.commit()
-    """
-            
-
     return render_template('index.html', term = term_name, schools = schools)
 
 @app.route('/about')
