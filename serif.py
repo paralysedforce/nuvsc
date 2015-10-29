@@ -34,10 +34,8 @@ def convertDOWToDays(dow):
     return meeting_str
 
 
-DATABASE = 'cache.db'
-
 app = Flask(__name__)
-app.config.from_object(__name__)
+app.config.from_object(os.environ['APP_SETTINGS'])
 client = NorthwesternAPIClient(os.environ['NUAPICLIENT_KEY'])
 
 
@@ -435,7 +433,7 @@ def all_sections():
                         )
     for section in sections:
         # Account for unscheduled courses
-        meeting_stry = ''
+        meeting_str = ''
         if section['dow'] != '[]': meeting_str = convertDOWToDays(section['dow'])
 
         section_time  = ""
