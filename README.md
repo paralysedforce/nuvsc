@@ -8,7 +8,7 @@ Serif is not intended to replace CAESAR - the enrollment of courses still must b
 
 If there is a feature that you would like to see added to Serif, or a functionality that you wish were different somehow, please send a note through the feedback form. This will help Serif become a better service for the students.
 
-The application is written in python (serverside) and javascript (clientside). The <a href='http://flask.pocoo.org/'>flask</a> api is used alongside <a href='http://getbootstrap.com/'>bootstrap</a> among other common packages such as jQuery UI. The data is taken from the <a href='http://developer.asg.northwestern.edu/'>Northwestern Course Data API</a> and is saved to a sqlite3 database (filename cache.db).
+The application is written in python (serverside) and javascript (clientside). The <a href='http://flask.pocoo.org/'>flask</a> api is used alongside <a href='http://getbootstrap.com/'>bootstrap</a> among other common packages such as jQuery UI. The data is taken from the <a href='http://developer.asg.northwestern.edu/'>Northwestern Course Data API</a> and is saved to a postgresql database.
 
 Instructions
 ------------------------------
@@ -16,7 +16,16 @@ To run a local version of Serif, clone this repository. The python dependencies 
 
 Latest Version
 ------------------------------
-Beta - 2.0
+Beta - 2.5
+CHANGELOG:
+<ul>
+    <li>Added Favicon</li>
+    <li>Bug Fix: Changed empty room text from "0" to "" (empty string)</li>
+    <li>Added an incoming features list on the development page</li>
+    <li>Bug Fix: Searching for a class that has components no longer only shows one component</li>
+    <li>Added Acknowledgements under the About page</li>
+    <li>Added ToS and Privacy Policy pages</li>
+</ul>
 
 Author and Contact
 ------------------------------

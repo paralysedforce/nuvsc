@@ -110,7 +110,7 @@ function show_courses(input){
                 var course = courses_list[i];
                 // Make course link
                 var course_link = document.createElement('a');
-                course_link.setAttribute('id', course['name']);
+                course_link.setAttribute('id', course['symbol']);
                 course_link.setAttribute('class', 'course_link');
                 course_link.setAttribute('onclick', "show_sections(this)");
                 course_link.setAttribute('data-toggle', 'modal');
@@ -236,8 +236,8 @@ function add_section_search(id){
                 var func_str = "add_component('" + components[key] + "', " + id + ")";
                 comp_link.setAttribute('onclick', func_str);
                 comp_link.innerHTML = components[key];
+                document.getElementById('modal_ul').appendChild(comp_link);
             }
-            document.getElementById('modal_ul').appendChild(comp_link);
         } else {
             add_section(id);
         }
