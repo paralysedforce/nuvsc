@@ -314,6 +314,7 @@ def update_descriptions():
                      'description':str(descript['desc'])
                     }
                 )
+    print "DONE MAKING API CALLS"
 
     for new_description in new_descriptions:
         new_desc_obj = Description(new_description['id'], new_description['name'], new_description['description'])
