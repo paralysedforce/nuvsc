@@ -28,6 +28,7 @@ CHANGELOG:
     <li>Set minimum search query length to 3 (any less than 3 characters will not return results)/li>
     <li>Added a "no results" message</li>
     <li>Tabbed search and browse</li>
+    <li>Added Winter 2016 Courses</li>
 </ul>
 
 Author and Contact
