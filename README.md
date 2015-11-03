@@ -16,7 +16,7 @@ To run a local version of Serif, clone this repository. The python dependencies 
 
 Latest Version
 ------------------------------
-Beta - 2.5
+V1.0
 CHANGELOG:
 <ul>
     <li>Added Favicon</li>
@@ -24,7 +24,10 @@ CHANGELOG:
     <li>Added an incoming features list on the development page</li>
     <li>Bug Fix: Searching for a class that has components no longer only shows one component</li>
     <li>Added Acknowledgements under the About page</li>
-    <li>Added ToS and Privacy Policy pages</li>
+    <li>Added ToS page</li>
+    <li>Set minimum search query length to 3 (any less than 3 characters will not return results)/li>
+    <li>Added a "no results" message</li>
+    <li>Tabbed search and browse</li>
 </ul>
 
 Author and Contact

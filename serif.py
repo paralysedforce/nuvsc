@@ -216,7 +216,7 @@ def update_schools():
 def update_subjects():
     # Get the old subjects for the most recent term
     most_recent_term = Term.query.order_by(desc(Term.term_id))[0]
-    old_subjects = Subject.query.filter_by(term_id = most_recent_term.term_id).all()
+    #old_subjects = Subject.query.filter_by(term_id = most_recent_term.term_id).all()
     # Get the new subjects for the most recent term by school
     new_subjects = []
     for school in School.query.all():
@@ -228,12 +228,15 @@ def update_subjects():
 
     for new_subject in new_subjects:
         new_subject_symbol = new_subject['symbol'] + ' ' + new_subject['school']
-        if new_subject_symbol not in [x.subject_symbol for x in old_subjects]:
+        #if new_subject_symbol not in [x.subject_symbol for x in old_subjects]:
+        try:
             new_subject_obj = Subject(new_subject_symbol, new_subject['symbol'], new_subject['name'], [])
             Term.query.filter_by(term_id = most_recent_term.term_id).first().subjects.append(new_subject_obj)
             School.query.filter_by(school_symbol = new_subject['school']).first().subjects.append(new_subject_obj)
             db.session.add(new_subject_obj)
-    db.session.commit()
+            db.session.commit()
+        except exc.IntegrityError:
+            db.session.rollback()
 
 def update_courses():
     # Get the old courses for the most recent term
@@ -314,7 +317,6 @@ def update_descriptions():
                      'description':str(descript['desc'])
                     }
                 )
-    print "DONE MAKING API CALLS"
 
     for new_description in new_descriptions:
         new_desc_obj = Description(new_description['id'], new_description['name'], new_description['description'])
@@ -468,8 +470,9 @@ def component(full_name, section_id):
 
 @app.route('/all_sections')
 def all_sections():
+    term_id = Term.query.order_by(desc(Term.term_id))[0].term_id
     sections_list = []
-    sections = Section.query.all()
+    sections = Section.query.filter_by(term_id = term_id).all()
     for section in sections:
         # Account for unscheduled courses
         meeting_str = ''

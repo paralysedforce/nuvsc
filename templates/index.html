@@ -7,51 +7,63 @@
 
                 <div id="current_term">
                     <h4>Displaying Courses For: {{term}}</h4>
-                    <p>Courses for Winter 2016 COMING SOON</p>
+                    <p>Winter 2016 Courses COMING SOON!</p>
                 </div>
 
-                <div id="search">
-                    <h3>Search</h3>
-                    <input id="autocomplete">
+                <ul class="nav nav-tabs" role="tablist">
+                    <li role="presentation" class="active"><a href="#search_tab" aria-controls="search" role="tab" data-toggle="tab">Search</a></li>
+                    <li role="presentation"><a href="#browse_tab" aria-controls="browse" role="tab" data-toggle="tab">Browse</a></li>
+                </ul>
+
+                <div class="tab-content">
+                    <div role="tabpanel" class="tab-pane active" id="search_tab">
+                        <div id="search">
+                            <h3>Search</h3>
+                            <input id="autocomplete">
+                            <p id="empty_message"></p>
+                        </div>
+                    </div>
+                    <div role="tabpanel" class="tab-pane" id="browse_tab">
+                        <h3>Browse Courses</h3>
+                        <div id='visual_course_finder'>
+                            <div class='school_box col-xs-6 col-sm-4 col-md-6'>
+                                <button id="{{schools[0].school_symbol}}" onclick="show_subjects(this)" class="school_button btn btn-default btn-block" type="submit">Medill</button>
+                                <!-- Add tooltip with {{schools[0][1]}} as text -->
+                            </div>
+                            <div class='school_box col-xs-6 col-sm-4 col-md-6'>
+                                <button id="{{schools[1].school_symbol}}" onclick="show_subjects(this)" class="school_button btn btn-default btn-block" type="submit">Kellogg</button>
+                            </div>
+                            <div class='school_box col-xs-6 col-sm-4 col-md-6'>
+                                <button id="{{schools[2].school_symbol}}" onclick="show_subjects(this)" class="school_button btn btn-default btn-block" type="submit">Law</button>
+                            </div>
+                            <div class='school_box col-xs-6 col-sm-4 col-md-6'>
+                                <button id="{{schools[3].school_symbol}}" onclick="show_subjects(this)" class="school_button btn btn-default btn-block" type="submit">McCormick</button>
+                            </div>
+                            <div class='school_box col-xs-6 col-sm-4 col-md-6'>
+                                <button id="{{schools[4].school_symbol}}" onclick="show_subjects(this)" class="school_button btn btn-default btn-block" type="submit">Bienen</button>
+                            </div>
+                            <div class='school_box col-xs-6 col-sm-4 col-md-6'>
+                                <button id="{{schools[5].school_symbol}}" onclick="show_subjects(this)" class="school_button btn btn-default btn-block" type="submit">Non-Degree</button>
+                            </div>
+                            <div class='school_box col-xs-6 col-sm-4 col-md-6'>
+                                <button id="{{schools[6].school_symbol}}" onclick="show_subjects(this)" class="school_button btn btn-default btn-block" type="submit">SESP</button>
+                            </div>
+                            <div class='school_box col-xs-6 col-sm-4 col-md-6'>
+                                <button id="{{schools[7].school_symbol}}" onclick="show_subjects(this)" class="school_button btn btn-default btn-block" type="submit">SoC</button>
+                            </div>
+                            <div class='school_box col-xs-6 col-sm-4 col-md-6'>
+                                <button id="{{schools[8].school_symbol}}" onclick="show_subjects(this)" class="school_button btn btn-default btn-block" type="submit">TGS</button>
+                            </div>
+                            <div class='school_box col-xs-6 col-sm-4 col-md-6'>
+                                <button id="{{schools[9].school_symbol}}" onclick="show_subjects(this)" class="school_button btn btn-default btn-block" type="submit">Cont. Ed.</button>
+                            </div>
+                            <div class='school_box col-xs-6 col-sm-4 col-md-6'>
+                                <button id="{{schools[10].school_symbol}}" onclick="show_subjects(this)" class="school_button btn btn-default btn-block" type="submit">Weinberg</button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
-                <h3>Browse Courses</h3>
-                <div id='visual_course_finder'>
-                    <div class='school_box col-xs-6 col-sm-4 col-md-6'>
-                        <button id="{{schools[0].school_symbol}}" onclick="show_subjects(this)" class="school_button btn btn-default btn-block" type="submit">Medill</button>
-                        <!-- Add tooltip with {{schools[0][1]}} as text -->
-                    </div>
-                    <div class='school_box col-xs-6 col-sm-4 col-md-6'>
-                        <button id="{{schools[1].school_symbol}}" onclick="show_subjects(this)" class="school_button btn btn-default btn-block" type="submit">Kellogg</button>
-                    </div>
-                    <div class='school_box col-xs-6 col-sm-4 col-md-6'>
-                        <button id="{{schools[2].school_symbol}}" onclick="show_subjects(this)" class="school_button btn btn-default btn-block" type="submit">Law</button>
-                    </div>
-                    <div class='school_box col-xs-6 col-sm-4 col-md-6'>
-                        <button id="{{schools[3].school_symbol}}" onclick="show_subjects(this)" class="school_button btn btn-default btn-block" type="submit">McCormick</button>
-                    </div>
-                    <div class='school_box col-xs-6 col-sm-4 col-md-6'>
-                        <button id="{{schools[4].school_symbol}}" onclick="show_subjects(this)" class="school_button btn btn-default btn-block" type="submit">Bienen</button>
-                    </div>
-                    <div class='school_box col-xs-6 col-sm-4 col-md-6'>
-                        <button id="{{schools[5].school_symbol}}" onclick="show_subjects(this)" class="school_button btn btn-default btn-block" type="submit">Non-Degree</button>
-                    </div>
-                    <div class='school_box col-xs-6 col-sm-4 col-md-6'>
-                        <button id="{{schools[6].school_symbol}}" onclick="show_subjects(this)" class="school_button btn btn-default btn-block" type="submit">SESP</button>
-                    </div>
-                    <div class='school_box col-xs-6 col-sm-4 col-md-6'>
-                        <button id="{{schools[7].school_symbol}}" onclick="show_subjects(this)" class="school_button btn btn-default btn-block" type="submit">SoC</button>
-                    </div>
-                    <div class='school_box col-xs-6 col-sm-4 col-md-6'>
-                        <button id="{{schools[8].school_symbol}}" onclick="show_subjects(this)" class="school_button btn btn-default btn-block" type="submit">TGS</button>
-                    </div>
-                    <div class='school_box col-xs-6 col-sm-4 col-md-6'>
-                        <button id="{{schools[9].school_symbol}}" onclick="show_subjects(this)" class="school_button btn btn-default btn-block" type="submit">Cont. Ed.</button>
-                    </div>
-                    <div class='school_box col-xs-6 col-sm-4 col-md-6'>
-                        <button id="{{schools[10].school_symbol}}" onclick="show_subjects(this)" class="school_button btn btn-default btn-block" type="submit">Weinberg</button>
-                    </div>
-                </div>
 
             </div><!--column-->
 

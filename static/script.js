@@ -556,7 +556,19 @@ $(document).ready(function(){
         var search_list = parseTextList(all_sections_data);
 
         $("#autocomplete").autocomplete({
-            source: search_list,
+            minLength: 3,
+            source: function(request, response){
+                var results = $.ui.autocomplete.filter(search_list, request.term);
+                if (request.term.length == 0){
+                    $("#empty_message").empty();
+                }
+                if (!results.length){
+                    $("#empty_message").text("No results found");
+                } else{
+                    $("#empty_message").empty();
+                }
+                response(results);
+            },
             autoFocus: true,
             select: function(event, ui){
                 add_section_search(ui.item.id);
