@@ -3,3 +3,4 @@
 *.sql~
 nuapiclient_key.py
 python-client/
+cache.dump
