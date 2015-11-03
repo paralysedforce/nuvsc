@@ -213,50 +213,42 @@ def update_schools():
             db.session.add(School(new_school['symbol'], new_school['name'], []))
     db.session.commit()
 
-def update_subjects():
-    # Get the old subjects for the most recent term
-    most_recent_term = Term.query.order_by(desc(Term.term_id))[0]
-    #old_subjects = Subject.query.filter_by(term_id = most_recent_term.term_id).all()
-    # Get the new subjects for the most recent term by school
+def update_subjects(term_id):
+    # Get the new subjects for the specified term by school
     new_subjects = []
     for school in School.query.all():
-        new_subjects_per_school = client.subjects(term = most_recent_term.term_id, school = school.school_symbol)
+        new_subjects_per_school = client.subjects(term = term_id, school = school.school_symbol)
         # Add the school as a property to each subject
         for sub in new_subjects_per_school:
             sub['school'] = school.school_symbol
         new_subjects += new_subjects_per_school
 
     for new_subject in new_subjects:
-        new_subject_symbol = new_subject['symbol'] + ' ' + new_subject['school']
-        #if new_subject_symbol not in [x.subject_symbol for x in old_subjects]:
+        new_subject_symbol = str(term_id) + " " + new_subject['symbol'] + ' ' + new_subject['school']
         try:
             new_subject_obj = Subject(new_subject_symbol, new_subject['symbol'], new_subject['name'], [])
-            Term.query.filter_by(term_id = most_recent_term.term_id).first().subjects.append(new_subject_obj)
+            Term.query.filter_by(term_id = term_id).first().subjects.append(new_subject_obj)
             School.query.filter_by(school_symbol = new_subject['school']).first().subjects.append(new_subject_obj)
             db.session.add(new_subject_obj)
             db.session.commit()
         except exc.IntegrityError:
             db.session.rollback()
 
-def update_courses():
-    # Get the old courses for the most recent term
-    most_recent_term = Term.query.order_by(desc(Term.term_id))[0]
-    #old_courses = Course.query.filter_by(term_id = most_recent_term.term_id).all()
-    # Get the new courses for the most recent term
+def update_courses(term_id):
+    # Get the new courses for the specified term
     new_courses = []
-    #TEMP LINE BELOW
-    #new_courses += client.courses_details(term = most_recent_term.term_id, subject = Subject.query.filter_by(term_id = most_recent_term.term_id).all()[0].symbol)
-    for subject in Subject.query.filter_by(term_id = most_recent_term.term_id).all():
-        new_courses += client.courses_details(term = most_recent_term.term_id, subject = subject.symbol)
+    #new_courses += client.courses_details(term = most_recent_term.term_id, subject = Subject.query.filter_by(term_id = most_recent_term.term_id).all()[0])
+    for subject in Subject.query.filter_by(term_id = term_id).all():
+        new_courses += client.courses_details(term = term_id, subject = subject.symbol)
 
     for new_course in new_courses:
         new_course_name = new_course['subject'] + ' ' + new_course['catalog_num'] + ' ' + new_course['title']
-        new_course_symbol = new_course['school'] + ' ' + new_course_name
+        new_course_symbol = str(term_id) + " " + new_course['school'] + ' ' + new_course_name
         #if new_course_name not in [x.course_name for x in old_courses]:
         new_course_obj = Course(new_course_symbol, new_course_name, [])
         try:
-            Term.query.filter_by(term_id = most_recent_term.term_id).first().courses.append(new_course_obj)
-            Subject.query.filter_by(subject_symbol = new_course['subject'] + ' ' + new_course['school']).first().courses.append(new_course_obj)
+            Term.query.filter_by(term_id = term_id).first().courses.append(new_course_obj)
+            Subject.query.filter_by(subject_symbol = str(term_id) + " " + new_course['subject'] + ' ' + new_course['school']).first().courses.append(new_course_obj)
             db.session.add(new_course_obj)
             db.session.commit()
         except exc.IntegrityError:
@@ -264,19 +256,13 @@ def update_courses():
         except orm.exc.FlushError:
             db.session.rollback()
 
-def update_sections():
-    # Get the old sections for the most recent term
-    most_recent_term = Term.query.order_by(desc(Term.term_id))[0]
-    #old_sections = Section.query.filter_by(term_id = most_recent_term.term_id).all()
-    # Get the new sections for the most recent term
+def update_sections(term_id):
+    # Get the new sections for the specified term
     new_sections = []
-    #TEMP LINE BELOW
-    #new_sections += client.courses_details(term = most_recent_term.term_id, subject = Subject.query.filter_by(term_id = most_recent_term.term_id).all()[0].symbol)
-    for subject in Subject.query.filter_by(term_id = most_recent_term.term_id).all():
-        new_sections += client.courses_details(term = most_recent_term.term_id, subject = subject.symbol)
+    for subject in Subject.query.filter_by(term_id = term_id).all():
+        new_sections += client.courses_details(term = term_id, subject = subject.symbol)
 
     for new_section in new_sections:
-        #if new_section['id'] not in [x.section_id for x in old_sections]:
         if new_section['room'] is None:
             room_val = ''
         else:
@@ -287,13 +273,13 @@ def update_sections():
                                   str(convertDaysToDOW(new_section['meeting_days'])),
                                   str(new_section['start_time']),
                                   str(new_section['end_time']),
-                                  new_section['instructor']['name'],
+                                  str(new_section['instructor']['name']),
                                   new_section['section'], room_val,
-                                  new_section['overview'],
-                                  new_section['requirements'], [], [])
+                                  str(new_section['overview']),
+                                  str(new_section['requirements']), [], [])
         try:
-            Term.query.filter_by(term_id = most_recent_term.term_id).first().sections.append(new_section_obj)
-            Course.query.filter_by(course_symbol = new_section['school'] + ' ' + new_section['subject'] + ' ' + new_section['catalog_num'] + ' ' + new_section['title']).first().sections.append(new_section_obj)
+            Term.query.filter_by(term_id = term_id).first().sections.append(new_section_obj)
+            Course.query.filter_by(course_symbol = str(term_id) + " " + new_section['school'] + ' ' + new_section['subject'] + ' ' + new_section['catalog_num'] + ' ' + new_section['title']).first().sections.append(new_section_obj)
             db.session.add(new_section_obj)
             db.session.commit()
         except exc.IntegrityError:
@@ -301,14 +287,12 @@ def update_sections():
         except orm.exc.FlushError:
             db.session.rollback()
 
-def update_descriptions():
-    # Get the old descriptions for the most recent term
-    most_recent_term = Term.query.order_by(desc(Term.term_id))[0]
-    old_descriptions = Description.query.filter_by(term_id = most_recent_term.term_id).all()
+def update_descriptions(term_id):
+    old_descriptions = Description.query.filter_by(term_id = term_id).all()
     # Get the new descriptions for the most recent term
     new_descriptions = []
-    for subject in Subject.query.filter_by(term_id = most_recent_term.term_id).all():
-        sections = client.courses_details(term = most_recent_term.term_id, subject = subject.symbol)
+    for subject in Subject.query.filter_by(term_id = term_id).all():
+        sections = client.courses_details(term = term_id, subject = subject.symbol)
         for section in sections:
             for descript in section['course_descriptions']:
                 new_descriptions.append(
@@ -325,14 +309,12 @@ def update_descriptions():
             db.session.add(new_desc_obj)
     db.session.commit()
 
-def update_components():
-    # Get the old components for the most recent term
-    most_recent_term = Term.query.order_by(desc(Term.term_id))[0]
-    old_components = Component.query.filter_by(term_id = most_recent_term.term_id).all()
+def update_components(term_id):
+    old_components = Component.query.filter_by(term_id = term_id).all()
     # Get the new components for the most recent term
     new_components = []
-    for subject in Subject.query.filter_by(term_id = most_recent_term.term_id).all():
-        sections = client.courses_details(term = most_recent_term.term_id, subject = subject.symbol)
+    for subject in Subject.query.filter_by(term_id = term_id).all():
+        sections = client.courses_details(term = term_id, subject = subject.symbol)
         for section in sections:
             for comp in section['course_components']:
                 new_components.append(
@@ -382,7 +364,8 @@ def terms_of_service():
 
 @app.route('/subjects/<school_symbol>')
 def subjects(school_symbol):
-    subjects = Subject.query.filter_by(school_symbol = school_symbol)
+    term_id = Term.query.order_by(desc(Term.term_id))[0].term_id
+    subjects = Subject.query.filter_by(term_id = term_id, school_symbol = school_symbol)
     subjects_json = [{'symbol':x.subject_symbol, 'name':x.name} for x in subjects]
     return json.dumps(subjects_json)
 
@@ -418,7 +401,6 @@ def sections(course_name):
 @app.route('/section/<int:section_id>')
 def section(section_id):
     section = Section.query.filter_by(section_id = section_id).all()[0]
-    print section.dow
     section_json = [
                         {'id':section.section_id,
                          'catalog_num':section.catalog_num,
