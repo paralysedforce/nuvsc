@@ -10,6 +10,8 @@ If there is a feature that you would like to see added to Serif, or a functional
 
 The application is written in python (serverside) and javascript (clientside). The <a href='http://flask.pocoo.org/'>flask</a> api is used alongside <a href='http://getbootstrap.com/'>bootstrap</a> among other common packages such as jQuery UI. The data is taken from the <a href='http://developer.asg.northwestern.edu/'>Northwestern Course Data API</a> and is saved to a postgresql database.
 
+The application takes advantage of localStorage in order to save user schedules locally.
+
 Instructions
 ------------------------------
 To run a local version of Serif, clone this repository. The python dependencies you'll need are: flask, <a href='https://github.com/northwesternapis/python-client'>nuapiclient</a>, and sqlite3. They can all be installed through pip. The clientside dependencies are: <a href='http://fullcalendar.io/'>fullcalendar</a>, jQuery UI, jQuery, and bootstrap. I recommend installing <a href='https://virtualenv.pypa.io/en/latest/'>virtualenv</a> and installing your pip dependencies that way.
@@ -21,6 +23,7 @@ CHANGELOG:
 <ul>
     <li>updated update methods to take term as paramter (except update_terms and schools)</li>
     <li>updated update_all</li>
+    <li>Serif now saves user schedules even after browser close</li>
 </ul>
 
 Author and Contact
