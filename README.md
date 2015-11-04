@@ -25,7 +25,7 @@ CHANGELOG:
     <li>Bug Fix: Searching for a class that has components no longer only shows one component</li>
     <li>Added Acknowledgements under the About page</li>
     <li>Added ToS page</li>
-    <li>Set minimum search query length to 3 (any less than 3 characters will not return results)/li>
+    <li>Set minimum search query length to 3 (any less than 3 characters will not return results)</li>
     <li>Added a "no results" message</li>
     <li>Tabbed search and browse</li>
     <li>Added Winter 2016 Courses</li>
