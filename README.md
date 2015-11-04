@@ -16,19 +16,11 @@ To run a local version of Serif, clone this repository. The python dependencies 
 
 Latest Version
 ------------------------------
-V1.0
+V1.1
 CHANGELOG:
 <ul>
-    <li>Added Favicon</li>
-    <li>Bug Fix: Changed empty room text from "0" to "" (empty string)</li>
-    <li>Added an incoming features list on the development page</li>
-    <li>Bug Fix: Searching for a class that has components no longer only shows one component</li>
-    <li>Added Acknowledgements under the About page</li>
-    <li>Added ToS page</li>
-    <li>Set minimum search query length to 3 (any less than 3 characters will not return results)</li>
-    <li>Added a "no results" message</li>
-    <li>Tabbed search and browse</li>
-    <li>Added Winter 2016 Courses</li>
+    <li>updated update methods to take term as paramter (except update_terms and schools)</li>
+    <li>updated update_all</li>
 </ul>
 
 Author and Contact
