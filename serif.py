@@ -199,19 +199,25 @@ def update_terms():
     new_terms = client.terms()
 
     # For each new term, see if it exists. If not, add it.
+    counter = 0
     for new_term in new_terms:
         if new_term['id'] not in [x.term_id for x in old_terms]:
             db.session.add(Term(new_term['id'], new_term['name'], new_term['start_date'], new_term['end_date'], [], [], [], [], []))
+            counter += 1
     db.session.commit()
+    print "{0} terms added.".format(counter)
 
 def update_schools():
     old_schools = School.query.all()
     new_schools = client.schools()
 
+    counter = 0
     for new_school in new_schools:
         if new_school['symbol'] not in [x.school_symbol for x in old_schools]:
             db.session.add(School(new_school['symbol'], new_school['name'], []))
+            counter += 1
     db.session.commit()
+    print "{0} schools added.".format(counter)
 
 def update_subjects(term_id):
     # Get the new subjects for the specified term by school
@@ -223,6 +229,7 @@ def update_subjects(term_id):
             sub['school'] = school.school_symbol
         new_subjects += new_subjects_per_school
 
+    counter = 0
     for new_subject in new_subjects:
         new_subject_symbol = str(term_id) + " " + new_subject['symbol'] + ' ' + new_subject['school']
         try:
@@ -231,8 +238,10 @@ def update_subjects(term_id):
             School.query.filter_by(school_symbol = new_subject['school']).first().subjects.append(new_subject_obj)
             db.session.add(new_subject_obj)
             db.session.commit()
+            counter += 1
         except exc.IntegrityError:
             db.session.rollback()
+    print "{0} subjects added".format(counter)
 
 def update_courses(term_id):
     # Get the new courses for the specified term
@@ -241,6 +250,7 @@ def update_courses(term_id):
     for subject in Subject.query.filter_by(term_id = term_id).all():
         new_courses += client.courses_details(term = term_id, subject = subject.symbol)
 
+    counter = 0
     for new_course in new_courses:
         new_course_name = new_course['subject'] + ' ' + new_course['catalog_num'] + ' ' + new_course['title']
         new_course_symbol = str(term_id) + " " + new_course['school'] + ' ' + new_course_name
@@ -251,10 +261,12 @@ def update_courses(term_id):
             Subject.query.filter_by(subject_symbol = str(term_id) + " " + new_course['subject'] + ' ' + new_course['school']).first().courses.append(new_course_obj)
             db.session.add(new_course_obj)
             db.session.commit()
+            counter += 1
         except exc.IntegrityError:
             db.session.rollback()
         except orm.exc.FlushError:
             db.session.rollback()
+    print "{0} courses added.".format(counter)
 
 def update_sections(term_id):
     # Get the new sections for the specified term
@@ -262,6 +274,7 @@ def update_sections(term_id):
     for subject in Subject.query.filter_by(term_id = term_id).all():
         new_sections += client.courses_details(term = term_id, subject = subject.symbol)
 
+    counter = 0
     for new_section in new_sections:
         if new_section['room'] is None:
             room_val = ''
@@ -282,10 +295,12 @@ def update_sections(term_id):
             Course.query.filter_by(course_symbol = str(term_id) + " " + new_section['school'] + ' ' + new_section['subject'] + ' ' + new_section['catalog_num'] + ' ' + new_section['title']).first().sections.append(new_section_obj)
             db.session.add(new_section_obj)
             db.session.commit()
+            counter += 1
         except exc.IntegrityError:
             db.session.rollback()
         except orm.exc.FlushError:
             db.session.rollback()
+    print "{0} sections added.".format(counter)
 
 def update_descriptions(term_id):
     old_descriptions = Description.query.filter_by(term_id = term_id).all()
@@ -302,12 +317,15 @@ def update_descriptions(term_id):
                     }
                 )
 
+    counter = 0
     for new_description in new_descriptions:
         new_desc_obj = Description(new_description['id'], new_description['name'], new_description['description'])
         if new_desc_obj not in old_descriptions:
             Section.query.filter_by(section_id = new_description['id']).first().descriptions.append(new_desc_obj)
             db.session.add(new_desc_obj)
+            counter += 0
     db.session.commit()
+    print "{0} descriptions added.".format(counter)
 
 def update_components(term_id):
     old_components = Component.query.filter_by(term_id = term_id).all()
@@ -328,12 +346,15 @@ def update_components(term_id):
                     }
                 )
 
+    counter = 0
     for new_component in new_components:
         new_comp_obj = Component(new_component['id'], new_component['component'], new_component['dow'], new_component['start_time'], new_component['end_time'], new_component['section'], new_component['room'])
         if new_comp_obj  not in old_components:
             Section.query.filter_by(section_id = new_component['id']).first().components.append(new_comp_obj)
             db.session.add(new_comp_obj)
+            counter += 1
     db.session.commit()
+    print "{0} components added.".format(counter)
 
 
 @app.route('/')
