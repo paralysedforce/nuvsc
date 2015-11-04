@@ -18,12 +18,10 @@ To run a local version of Serif, clone this repository. The python dependencies 
 
 Latest Version
 ------------------------------
-V1.1
+V1.2
 CHANGELOG:
 <ul>
-    <li>updated update methods to take term as paramter (except update_terms and schools)</li>
-    <li>updated update_all</li>
-    <li>Serif now saves user schedules even after browser close</li>
+    <li>Added loading message to search box</li>
 </ul>
 
 Author and Contact

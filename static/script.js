@@ -772,6 +772,7 @@ $(document).ready(function(){
     // Load search box
     $.get("/all_sections", function(all_sections_data){
         var search_list = parseTextList(all_sections_data);
+        $("#empty_message").empty()
 
         $("#autocomplete").autocomplete({
             minLength: 3,
