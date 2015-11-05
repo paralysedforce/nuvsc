@@ -778,7 +778,7 @@ $(document).ready(function(){
     }
 
     // Load search box
-    $.get("/all_sections", function(all_sections_data){
+    $.get("https://s3.amazonaws.com/serif-assets/all_sections.json", function(all_sections_data){
         var search_list = parseTextList(all_sections_data);
         $("#empty_message").empty();
 
