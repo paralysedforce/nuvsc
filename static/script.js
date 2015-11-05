@@ -674,8 +674,12 @@ function remove_course(id){
     // Remove from local storage
     if (typeof(Storage) !== "undefined"){
         for (var i = 0; i < localStorage.length; i++){
-            if (localStorage.key(i) == "section_" + id.toString() || localStorage.key(i) == "component_" + id.toString()){
+            if (localStorage.key(i) == "section_" + id.toString()){
                 localStorage.removeItem(localStorage.key(i));
+                i--;
+            } else if (localStorage.key(i) == "component_" + id.toString()){
+                localStorage.removeItem(localStorage.key(i));
+                i--;
             }
         }
     }
@@ -755,6 +759,10 @@ $(document).ready(function(){
         // If so, add all saved courses
         var i = 0;
         while (i < localStorage.length){
+            //TEMP
+            console.log(localStorage.key(i));
+            console.log(localStorage.getItem(localStorage.key(i)));
+
             if (localStorage.key(i).split("_")[0] == "component"){
                 dataobj = JSON.parse(localStorage.getItem(localStorage.key(i)));
                 re_add_component(dataobj['full_name'], dataobj['id'], dataobj['data']);

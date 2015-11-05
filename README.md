@@ -22,6 +22,7 @@ V1.2
 CHANGELOG:
 <ul>
     <li>Added loading message to search box</li>
+    <li>Bug Fix: When removing a discussion section, the actual course was not removed from localstorage. It now works as intended.</li>
 </ul>
 
 Author and Contact
