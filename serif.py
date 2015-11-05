@@ -329,7 +329,6 @@ def update_descriptions(term_id):
     print "{0} descriptions added.".format(counter)
 
 def update_components(term_id):
-    old_components = Component.query.filter_by(term_id = term_id).all()
     # Get the new components for the most recent term
     new_components = []
     for subject in Subject.query.filter_by(term_id = term_id).all():
@@ -353,8 +352,8 @@ def update_components(term_id):
         try:
             Section.query.filter_by(section_id = new_component['id']).first().components.append(new_comp_obj)
             db.session.add(new_comp_obj)
-            counter += 1
             db.session.commit()
+            counter += 1
         except exc.IntegrityError:
             db.session.rollback()
     print "{0} components added.".format(counter)
