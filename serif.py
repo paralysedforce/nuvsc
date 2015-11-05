@@ -172,7 +172,7 @@ class Description(db.Model):
         return '<{0}, description id = {1}>'.format(self.name, self.description_id)
 
 class Component(db.Model):
-    id = db.Column(db.Integer, primary_key = True)
+    component_symbol = db.Column(db.String(), primary_key = True)
     component_id = db.Column(db.Integer)
     component = db.Column(db.String())
     dow = db.Column(db.String())
@@ -184,7 +184,8 @@ class Component(db.Model):
     term_id = db.Column(db.Integer, db.ForeignKey('term.term_id'))
     section_id = db.Column(db.Integer, db.ForeignKey('section.section_id'))
 
-    def __init__(self, component_id, component, dow, start_time, end_time, component_section, room):
+    def __init__(self, component_symbol, component_id, component, dow, start_time, end_time, component_section, room):
+        self.component_symbol = component_symbol
         self.component_id = component_id
         self.component = component
         self.dow = dow
@@ -348,12 +349,14 @@ def update_components(term_id):
 
     counter = 0
     for new_component in new_components:
-        new_comp_obj = Component(new_component['id'], new_component['component'], new_component['dow'], new_component['start_time'], new_component['end_time'], new_component['section'], new_component['room'])
-        if new_comp_obj  not in old_components:
+        new_comp_obj = Component(new_component['component'] + " " + new_component['dow'] + " " + new_component['start_time'] + "-" + new_component['end_time'] + " Section" + new_component['section'] + " " + new_component['room'], new_component['id'], new_component['component'], new_component['dow'], new_component['start_time'], new_component['end_time'], new_component['section'], new_component['room'])
+        try:
             Section.query.filter_by(section_id = new_component['id']).first().components.append(new_comp_obj)
             db.session.add(new_comp_obj)
             counter += 1
-    db.session.commit()
+            db.session.commit()
+        except exc.IntegrityError:
+            db.session.rollback()
     print "{0} components added.".format(counter)
 
 
