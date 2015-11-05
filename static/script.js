@@ -774,6 +774,7 @@ $(document).ready(function(){
         }
     } else{
         // If not, display warning message
+        $('#announcement_panel').css('display', 'initial');
         $('#announcement_body').append("\nYour browser does not support local storage. This means you'll lose your schedule when you close Serif.");
     }
 
