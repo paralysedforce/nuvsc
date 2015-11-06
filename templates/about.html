@@ -5,9 +5,38 @@
     <h1>About</h1>
     <p>Serif is a web application designed to be the ultimate preparation tool for student schedule preparation at Northwestern. Originally constructed to combat CAESAR's inability to view the shopping cart in a weekly view, Serif is continually being developed to add more features that will help the student experience.</p>
     <p>Serif is not intended to replace CAESAR - the enrollment of courses still must be done in CAESAR itself, not to mention the myriad of other functionality that CAESAR contains that is not related to scheduling (billing, emergency contact, etc). However, Serif should compliment and greatly ease the use of CAESAR for course enrollment, as it will allow students to find courses quickly and easily, create and compare multiple schedules, and more.</p>
-    <p>If there is a feature that you would like to see added to Serif, or a functionality that you wish were different somehow, please send a note through the feedback form. This will help Serif become a better service for all students.</p>
+    <p>If there is a feature that you would like to see added to Serif, or a functionality that you wish were different somehow, please send a note through the <a href="{{url_for('contact')}}">feedback form</a>. This will help Serif become a better service for all students.</p>
+    <br>
+    <!--
+    <h3>Why Serif?</h3>
+    <p><i>Serif is fast.</i> Other course search websites at Northwestern or other universities utilize server side querying, which means that all of the course data is stored in some server on the internet, and every time you search, your computer asks that server for the information. This sounds great in theory, but imagine that it's registration week and hundreds of students are using the website - the server gets bogged down and your searching will become terribly slow. Serif saves all of the data in your browser so that the search is instant and there is no need to talk to a server that may slow things down.</p> 
+    <p><i>Serif is simple.</i> Who wants to have to navigate through clunky course browsing menus that don't even have a back button? Why should you have to deal with a search menu that makes it difficult to make multiple searches quickly? On Serif, you can do everything in one place - you don't ever have to navigate away from the home page to plan your next quarter. All the information you need, streamlined.</p>
+    <p><i>Serif is mobile.</i> Serif is designed for great performance on both computer and mobile.</p>
+    <br>
+    -->
+    <h1>FAQ</h1>
+    <div class="panel panel-default">
+        <div class="panel-heading">Can I save my schedule somehow?</div>
+        <div class="panel-body">
+            Serif currently saves your schedule automatically so that you don't have to worry about starting over when you come back to the page. But if you really need access to your schedule across multiple devices, log in functionality will be added in the future.
+        </div>
+    </div>
+    <div class="panel panel-default">
+        <div class="panel-heading">Can I browse courses from other terms?</div>
+        <div class="panel-body">
+            This feature will be added shortly!
+        </div>
+    </div>
+    <div class="panel panel-default">
+        <div class="panel-heading">It's a pain to have to remove a course just to switch discussion sections. Is there a better way to do that?</div>
+        <div class="panel-body">
+            This feature will be added shortly!
+        </div>
+    </div>
+    <br>
     <h1>Acknowledgements</h1>
     <p>This web app would not have been possible without the tireless support from the following: Ian Thompson, Istvan Burbank, Peter Friend, and Mike Guo. Special thanks to Simon Bohn, Edan Bar, and Lauren Barmore for providing feature suggestions and other support. Thank you to those who helped beta test Serif.</p>
+    <br>
 </div>
 
 {% endblock %}
