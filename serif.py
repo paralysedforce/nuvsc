@@ -337,9 +337,11 @@ def update_components(term_id):
     for subject in Subject.query.filter_by(term_id = term_id).all():
         sections = client.courses_details(term = term_id, subject = subject.symbol)
         for section in sections:
-            for comp in section['course_components']:
+            for i in range(len(section['course_components'])):
+                comp = section['course_components'][i]
                 new_components.append(
-                    {'id':int(section['id']),
+                    {'symbol':str(section['id']) + "_" + str(i),
+                     'id':int(section['id']),
                      'component':str(comp['component']),
                      'dow':str(convertDaysToDOW(comp['meeting_days'])),
                      'start_time':str(comp['start_time']),
@@ -351,7 +353,7 @@ def update_components(term_id):
 
     counter = 0
     for new_component in new_components:
-        new_comp_obj = Component(new_component['component'] + " " + new_component['dow'] + " " + new_component['start_time'] + "-" + new_component['end_time'] + " Section" + new_component['section'] + " " + new_component['room'], new_component['id'], new_component['component'], new_component['dow'], new_component['start_time'], new_component['end_time'], new_component['section'], new_component['room'])
+        new_comp_obj = Component(new_component['symbol'], new_component['id'], new_component['component'], new_component['dow'], new_component['start_time'], new_component['end_time'], new_component['section'], new_component['room'])
         try:
             Section.query.filter_by(section_id = new_component['id']).first().components.append(new_comp_obj)
             db.session.add(new_comp_obj)

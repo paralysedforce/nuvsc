@@ -4,3 +4,4 @@
 nuapiclient_key.py
 python-client/
 cache.dump
+create_dump.sh

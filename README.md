@@ -22,6 +22,7 @@ V1.3
 CHANGELOG:
 <ul>
     <li>Added "I'm ready to register" functionality</li>
+    <li>Changed primary key of components so that none were missing</li>
 </ul>
 
 Author and Contact
