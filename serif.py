@@ -128,6 +128,7 @@ class Section(db.Model):
     room = db.Column(db.String())
     overview = db.Column(db.String())
     requirements = db.Column(db.String())
+    univ_num = db.Column(db.Integer)
 
     term_id = db.Column(db.Integer(), db.ForeignKey('term.term_id'))
     course_symbol = db.Column(db.String(), db.ForeignKey('course.course_symbol'))
@@ -135,7 +136,7 @@ class Section(db.Model):
     descriptions = db.relationship('Description', backref = 'section', lazy = 'dynamic')
     components = db.relationship('Component', backref = 'section', lazy = 'dynamic')
     
-    def __init__(self, section_id, catalog_num, title, dow, start_time, end_time, instructor, section, room, overview, requirements, descriptions, components):
+    def __init__(self, section_id, catalog_num, title, dow, start_time, end_time, instructor, section, room, overview, requirements, univ_num, descriptions, components):
         self.section_id = section_id
         self.catalog_num = catalog_num
         self.title = title
@@ -147,6 +148,7 @@ class Section(db.Model):
         self.room = room
         self.overview = overview
         self.requirements = requirements
+        self.univ_num = univ_num
 
         self.descriptions = descriptions
         self.components = components
@@ -281,6 +283,7 @@ def update_sections(term_id):
             room_val = ''
         else:
             room_val = new_section['room']['building_name'] + ' ' + new_section['room']['name']
+
         new_section_obj = Section(new_section['id'],
                                   new_section['catalog_num'],
                                   new_section['title'],
@@ -290,7 +293,7 @@ def update_sections(term_id):
                                   str(new_section['instructor']['name']),
                                   new_section['section'], room_val,
                                   str(new_section['overview']),
-                                  str(new_section['requirements']), [], [])
+                                  str(new_section['requirements']), new_section['class_num'], [], [])
         try:
             Term.query.filter_by(term_id = term_id).first().sections.append(new_section_obj)
             Course.query.filter_by(course_symbol = str(term_id) + " " + new_section['school'] + ' ' + new_section['subject'] + ' ' + new_section['catalog_num'] + ' ' + new_section['title']).first().sections.append(new_section_obj)
@@ -365,6 +368,13 @@ def index():
     schools = School.query.all()
     return render_template("index.html", term = term_name, schools = schools)
 
+@app.route('/idb_terms')
+def terms():
+    terms = Term.query.all()
+    terms_json = [{'term_id':x.term_id, 'name':x.name, 'start_date':x.start_date, 'end_date':x.end_date} for x in terms]
+    return json.dumps(terms_json)
+
+
 @app.route('/about')
 def about():
     return render_template('about.html')
@@ -416,7 +426,7 @@ def sections(course_name):
                          'course':x.course.course_name,
                          'room':x.room,
                          'overview':x.overview,
-                         'requirements':x.requirements
+                         'requirements':x.requirements,
                         } for x in sections
                     ]
     return json.dumps(sections_json)
@@ -436,7 +446,8 @@ def section(section_id):
                          'course':section.course.course_name,
                          'room':section.room,
                          'overview':section.overview,
-                         'requirements':section.requirements
+                         'requirements':section.requirements,
+                         'univ_num':section.univ_num
                         }
                     ]
     return json.dumps(section_json)

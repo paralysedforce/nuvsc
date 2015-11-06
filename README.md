@@ -18,15 +18,10 @@ To run a local version of Serif, clone this repository. The python dependencies 
 
 Latest Version
 ------------------------------
-V1.2
+V1.3
 CHANGELOG:
 <ul>
-    <li>Added loading message to search box</li>
-    <li>Bug Fix: When removing a discussion section, the actual course was not removed from localstorage. It now works as intended.</li>
-    <li>Added new parameter for components so that duplicate components don't clutter the db</li>
-    <li>Switched all_sections ajax desitation from queried db flask serve to static Amazon S3 file</li>
-    <li>Fixed bug where trying to add the same course twice that had components did weird things</li>
-    <li>Added location to mouseover popover</li>
+    <li>Added "I'm ready to register" functionality</li>
 </ul>
 
 Author and Contact

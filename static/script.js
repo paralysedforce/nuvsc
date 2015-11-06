@@ -161,7 +161,6 @@ function show_sections(input){
                 var sections_in_cart = document.getElementById("cart").children;
                 for (var j = 0; j < sections_in_cart.length; j++){
                     // If yes, make link red
-                    console.log(sections_in_cart[j]);
                     if (sections_in_cart[j].id == section['id'] && sections_in_cart[j].getAttribute('class').indexOf("section_cart") != -1){
                         section_link.style.color = 'red';
                     }
@@ -347,6 +346,12 @@ function add_section(id){
                 localStorage.setItem("section_" + id.toString(), JSON.stringify({'id':id, 'data':section, 'desc':descriptions}));
             }
 
+            // Add to CAESAR Panel
+            var CAESAR_div = document.createElement('div');
+            CAESAR_div.setAttribute('id', 'CAESAR' + id);
+            CAESAR_div.innerHTML = section['course'] + "<ul><li>" + section['univ_num'] + "</li></ul>";
+            document.getElementById("CAESAR").appendChild(CAESAR_div);
+
             // Create panel heading and panel
             var panel_head = document.createElement('div');
             panel_head.setAttribute('class', 'panel-heading');
@@ -399,6 +404,9 @@ function add_section(id){
 					var requirements_p = document.createElement('p');
 					requirements_p.innerHTML = "<b>Requirements:</b> " + section['requirements'];
 
+                                        var univ_num_p = document.createElement('p');
+                                        univ_num_p.innerHTML = "<b>CAESAR Class Nbr</b> " + section['univ_num'];
+
 					var remove_a = document.createElement('a');
 					remove_a.setAttribute('onclick', 'remove_course(this.parentElement.parentElement.parentElement.id)');
 					remove_a.setAttribute('href', 'javascript:;');
@@ -410,6 +418,7 @@ function add_section(id){
 				panel_body.appendChild(room_p);
 				panel_body.appendChild(overview_p);
 				panel_body.appendChild(requirements_p);
+				panel_body.appendChild(univ_num_p);
 
             if (descriptions != "") {
                 var descriptions_link = document.createElement('a');
@@ -496,6 +505,14 @@ function add_section(id){
 }
 
 function re_add_section(id, data, desc){
+    var section = data;
+
+    // Add to CAESAR Panel
+    var CAESAR_div = document.createElement('div');
+    CAESAR_div.setAttribute('id', 'CAESAR' + id);
+    CAESAR_div.innerHTML = section['course'] + "<ul><li>" + section['univ_num'] + "</li></ul>";
+    document.getElementById("CAESAR").appendChild(CAESAR_div);
+
     // Adding info to cart
     // Create containing div
     var section_data = document.createElement('div');
@@ -503,7 +520,6 @@ function re_add_section(id, data, desc){
     section_data.setAttribute('id', id);
 
     // Populate div with content
-    var section = data;
 
     // Create panel heading and panel
     var panel_head = document.createElement('div');
@@ -557,6 +573,9 @@ function re_add_section(id, data, desc){
                                 var requirements_p = document.createElement('p');
                                 requirements_p.innerHTML = "<b>Requirements:</b> " + section['requirements'];
 
+                                var univ_num_p = document.createElement('p');
+                                univ_num_p.innerHTML = "<b>CAESAR Class Nbr</b> " + section['univ_num'];
+
                                 var remove_a = document.createElement('a');
                                 remove_a.setAttribute('onclick', 'remove_course(this.parentElement.parentElement.parentElement.id)');
                                 remove_a.setAttribute('href', 'javascript:;');
@@ -568,6 +587,7 @@ function re_add_section(id, data, desc){
                         panel_body.appendChild(room_p);
                         panel_body.appendChild(overview_p);
                         panel_body.appendChild(requirements_p);
+                        panel_body.appendChild(univ_num_p);
 
     descriptions = desc;
 
@@ -696,6 +716,17 @@ function remove_course(id){
             }
         }
     }
+
+    // Remove from CAESAR modal
+    $("#CAESAR" + id).remove();
+    /*
+    var CAESAR_items = document.getElementById('CAESAR').children;
+    for (var i = 0; i < CAESAR_items.length; i++){
+        if (CAESAR_items[i].getAttribute('id') == "CAESAR" + id){
+            CAESAR_items[i].
+    }
+    */
+
     // If the event is unscheduled it, remove it from the unscheduled section
     var unscheduled_children = document.getElementById("unscheduled").children;
     for (var i = 0; i < unscheduled_children.length; i++){
@@ -797,7 +828,9 @@ $(document).ready(function(){
 
     // Load search box
     $.get("https://s3.amazonaws.com/serif-assets/all_sections.json", function(all_sections_data){
+        // get the information
         var search_list = parseTextList(all_sections_data);
+        // get rid of Loading message
         $("#empty_message").empty();
 
         $("#autocomplete").autocomplete({
