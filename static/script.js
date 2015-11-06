@@ -161,7 +161,8 @@ function show_sections(input){
                 var sections_in_cart = document.getElementById("cart").children;
                 for (var j = 0; j < sections_in_cart.length; j++){
                     // If yes, make link red
-                    if (sections_in_cart[j].id == section['id'] && sections_in_cart[j].getAttribute('class') == "section_cart"){
+                    console.log(sections_in_cart[j]);
+                    if (sections_in_cart[j].id == section['id'] && sections_in_cart[j].getAttribute('class').indexOf("section_cart") != -1){
                         section_link.style.color = 'red';
                     }
                 }
@@ -181,9 +182,21 @@ function show_sections(input){
 }
 
 function add_section_visual(id){
-    var section_link = document.getElementById(id);
-    if (section_link.getAttribute('class') == 'section_link'){
-        section_link.style.color = 'red';
+    // Check if course is aleady in cart
+    var sections_in_cart = document.getElementById("cart").children;
+    for (var i = 0; i < sections_in_cart.length; i++){
+        if (sections_in_cart[i].id == id){
+            window.alert("This course is already in your cart.");
+            return;
+        }
+    }
+
+    var section_links = document.getElementsByClassName("section_link");
+    var section_link = {}
+    for (var i = 0; i < section_links.length; i++){
+        if (section_links[i].getAttribute('id') == id){
+            section_link = section_links[i];
+        }
     }
 
     $.get("/components/" + id, function(components_data){
@@ -247,8 +260,8 @@ function add_section_search(id){
 function add_component(full_name, id){
     var comp_link = document.getElementById(full_name);
 	if (comp_link.style.color == 'red'){
-		window.alert("This course is already in your cart.");
-		return;
+            window.alert("This course is already in your cart.");
+            return;
 	}
     comp_link.style.color = 'red';
 
@@ -718,7 +731,7 @@ $(document).ready(function(){
         columnFormat: 'ddd',
         height: "auto",
         minTime: "07:00:00",
-        maxTime: "23:00:00",
+        maxTime: "22:00:00",
         allDaySlot: false,
         events: {
             googleCalendarId: '57bcm4ch79o7820fm5d66e09j8@group.calendar.google.com',
@@ -728,9 +741,17 @@ $(document).ready(function(){
             element[0].setAttribute('data-toggle', 'popover');
             element[0].setAttribute('title', "<b>" + event.title + "</b>");
             if (event.instructor == undefined){
-                element[0].setAttribute('data-content', "Section " + event.section + "<br>" + event.component + "<br><a onclick='remove_course(" + event.id + ")' href='javascript:;'>Remove</a>");
+                if (event.room == ""){
+                    element[0].setAttribute('data-content', "Section " + event.section + "<br>" + event.component + "<br><a onclick='remove_course(" + event.id + ")' href='javascript:;'>Remove</a>");
+                } else{
+                    element[0].setAttribute('data-content', "Section " + event.section + "<br>" + event.room + "<br>" + event.component + "<br><a onclick='remove_course(" + event.id + ")' href='javascript:;'>Remove</a>");
+                }
             } else {
-                element[0].setAttribute('data-content', "Section " + event.section + "<br>" + event.instructor + "<br><a onclick='remove_course(" + event.id + ")' href='javascript:;'>Remove</a>");
+                if (event.room == ""){
+                    element[0].setAttribute('data-content', "Section " + event.section + "<br>" + event.instructor + "<br><a onclick='remove_course(" + event.id + ")' href='javascript:;'>Remove</a>");
+                } else{
+                    element[0].setAttribute('data-content', "Section " + event.section + "<br>" + event.room + "<br>" + event.instructor + "<br><a onclick='remove_course(" + event.id + ")' href='javascript:;'>Remove</a>");
+                }
             }
             // Make sure it stays open when you move your mouse over to it
             $(element[0]).popover({
@@ -759,10 +780,6 @@ $(document).ready(function(){
         // If so, add all saved courses
         var i = 0;
         while (i < localStorage.length){
-            //TEMP
-            console.log(localStorage.key(i));
-            console.log(localStorage.getItem(localStorage.key(i)));
-
             if (localStorage.key(i).split("_")[0] == "component"){
                 dataobj = JSON.parse(localStorage.getItem(localStorage.key(i)));
                 re_add_component(dataobj['full_name'], dataobj['id'], dataobj['data']);

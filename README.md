@@ -26,6 +26,7 @@ CHANGELOG:
     <li>Added new parameter for components so that duplicate components don't clutter the db</li>
     <li>Switched all_sections ajax desitation from queried db flask serve to static Amazon S3 file</li>
     <li>Fixed bug where trying to add the same course twice that had components did weird things</li>
+    <li>Added location to mouseover popover</li>
 </ul>
 
 Author and Contact
