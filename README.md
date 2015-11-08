@@ -23,6 +23,7 @@ CHANGELOG:
 <ul>
     <li>Added "I'm ready to register" functionality</li>
     <li>Changed primary key of components so that none were missing</li>
+    <li>Added scroll functionality to browse</li>
 </ul>
 
 Author and Contact

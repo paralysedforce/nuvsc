@@ -1,3 +1,6 @@
+var idbSupported = false;
+var db;
+
 var current_term = "";
 var current_school = "";
 var current_subject = [];
@@ -47,34 +50,34 @@ function show_subjects(input){
     current_school = input.getAttribute('id');
 
     $.get("/subjects/" + current_school, function(subjects){
-		// Back link
-		var back = document.createElement('div');
-		back.setAttribute('class', 'subject_box');
-		//TODO change this to creating a button using javascript then appending child
-		back.innerHTML = "<button type='button' class='btn btn-default btn-sm' onclick='back(this)'>Back</button>";
-		document.getElementById("visual_course_finder").appendChild(back);
-		$('#visual_course_finder').append("<br class='subject_box'>");
-		// Generate subject links
-		var subjects_list = JSON.parse(subjects);
-		for (var i = 0; i < subjects_list.length; i++){
-			var subject_box = document.createElement('div');
-			subject_box.setAttribute('class', 'subject_box');
-			subject_box.setAttribute('id', subjects_list[i]['symbol']);
-			subject_box.innerHTML = "<button type='button' class='btn btn-primary btn-xs btn-block subject_btn' onclick='show_courses(this)'>" + subjects_list[i]['name'] + "</button>";
-			document.getElementById("visual_course_finder").appendChild(subject_box);
-		}
-		var btt_div = document.createElement('div');
-		btt_div.setAttribute('class', 'back_to_top subject_box');
-		// Back to top button
-		var back_to_top = document.createElement('a');
-		back_to_top.setAttribute('class', 'btn btn-default btn-xs');
-		back_to_top.setAttribute('href', '#');
-		back_to_top.setAttribute('role', 'button');
-		back_to_top.innerHTML = "Back to top";
-		
-		btt_div.appendChild(back_to_top);
-		document.getElementById("visual_course_finder").appendChild(btt_div);
-	});
+        // Back link
+        var back = document.createElement('div');
+        back.setAttribute('class', 'subject_box');
+        //TODO change this to creating a button using javascript then appending child
+        back.innerHTML = "<button type='button' class='btn btn-default btn-sm' onclick='back(this)'>Back</button>";
+        document.getElementById("visual_course_finder").appendChild(back);
+        $('#visual_course_finder').append("<br class='subject_box'>");
+        // Generate subject links
+        var subjects_list = JSON.parse(subjects);
+        for (var i = 0; i < subjects_list.length; i++){
+                var subject_box = document.createElement('div');
+                subject_box.setAttribute('class', 'subject_box');
+                subject_box.setAttribute('id', subjects_list[i]['symbol']);
+                subject_box.innerHTML = "<button type='button' class='btn btn-primary btn-xs btn-block subject_btn' onclick='show_courses(this)'>" + subjects_list[i]['name'] + "</button>";
+                document.getElementById("visual_course_finder").appendChild(subject_box);
+        }
+        var btt_div = document.createElement('div');
+        btt_div.setAttribute('class', 'back_to_top subject_box');
+        // Back to top button
+        var back_to_top = document.createElement('a');
+        back_to_top.setAttribute('class', 'btn btn-default btn-xs');
+        back_to_top.setAttribute('href', '#');
+        back_to_top.setAttribute('role', 'button');
+        back_to_top.innerHTML = "Back to top";
+        
+        btt_div.appendChild(back_to_top);
+        document.getElementById("visual_course_finder").appendChild(btt_div);
+    });
 }
 
 function show_courses(input){

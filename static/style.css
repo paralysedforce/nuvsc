@@ -75,3 +75,10 @@ ul {
 #announcement_panel {
     display: none;
 }
+
+@media (min-width: 768px){
+    #tab_content {
+        overflow-y: scroll;
+        height: 650px;
+    }
+}

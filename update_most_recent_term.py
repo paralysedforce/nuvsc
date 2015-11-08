@@ -1,7 +1,7 @@
-import sys
 import serif as s
+from sqlalchemy import desc
 
-term_id = s.Term.query.filter_by(term_id = sys.argv[1]).first().term_id
+term_id = s.Term.query.order_by(desc(s.Term.term_id))[0].term_id
 
 s.update_terms()
 print "Updated Terms"
