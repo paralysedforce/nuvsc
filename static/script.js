@@ -71,7 +71,7 @@ function show_subjects(input){
         // Back to top button
         var back_to_top = document.createElement('a');
         back_to_top.setAttribute('class', 'btn btn-default btn-xs');
-        back_to_top.setAttribute('href', '#');
+        back_to_top.setAttribute('href', '#btt');
         back_to_top.setAttribute('role', 'button');
         back_to_top.innerHTML = "Back to top";
         
@@ -756,6 +756,74 @@ function back(input){
 }
 
 $(document).ready(function(){
+    /*
+    // Check if indexedDB is supported
+    if ("indexedDB" in window){ idbSupported = true; }
+    // If it is, then:
+    if (idbSupported){
+        // Open database with version and db name specified
+        var openRequest = indexedDB.open("cache", 3);
+
+        // First time user:
+        openRequest.onupgradeneeded = function(e){
+            var thisdb = e.target.result;
+            // Adding data to user's indexedDB
+            // Terms
+            if (!thisdb.objectStoreNames.contains("term")){
+                var objectStore = thisdb.createObjectStore("term", {keyPath:"term_id"});
+                // Add properties
+                objectStore.createIndex("term_id", "term_id", {unique:true});
+                objectStore.createIndex("name", "name", {unique:false});
+                objectStore.createIndex("start_date", "start_date", {unique:false});
+                objectStore.createIndex("end_date", "end_date", {unique:false});
+            }
+            // Fetch data
+            $.get("/all_terms", function(all_terms_text){
+                all_terms = JSON.parse(all_terms_text);
+                all_terms_filtered = []
+                for (var i = 0; i < all_terms.length; i++){
+                    // Select only certain terms
+                    if (all_terms[i]['term_id'] == 4610){ all_terms_filtered.push(all_terms[i]); }
+                    else if (all_terms[i]['term_id'] == 4600){ all_terms_filtered.push(all_terms[i]); }
+                }
+                var store = thisdb.transaction(["term"], "readwrite").objectStore("term");
+                for (var i = 0; i < all_terms_filtered.length; i++){
+                    //TODO Check if term is already in db, if not:
+                        var request = store.add(all_terms_filtered[i], all_terms_filtered[i]['term_id']);
+                        request.onerror = function(e){
+                            console.log("Error", e.target.error.name);
+                        }
+                        request.onsuccess = function(e){}
+                }
+            });
+            // Schools
+            if (!thisdb.objectStoreNames.contains("school")){
+                var objectStore = thisdb.createObjectStore("school", {keyPath:"school_symbol"});
+                // Add properties
+                objctStore.createIndex("school_symbol", "school_symbol", {unique:true});
+                objctStore.createIndex("name", "name", {unique:false});
+            }
+            // Fetch data
+            $.get("/all_schools", function(all_schools_text){
+                all_schools = JSON.parse(all_schools_text);
+                var store = thisdb.transaction(["school"], "readwrite").objectStore("school");
+                for (var i = 0; i < all_schools.length; i++){
+                    //TODO Check if school is already in db, if not:
+                        var request = store.add(all_schools[i], all_schools[i]['school_symbol']);
+                        request.onerror = function(e){
+                            console.log("Error", e.target.error.name);
+                        }
+                        request.onsucess = function(e){}
+                }
+            });
+            // Subjects
+            if (!thisdb.objectStoreNames.contains("subjects")){
+            }
+        }
+        openRequest.onsuccess = function(e){}
+    }
+    */
+
     // Load calendar
     $('#calendar').fullCalendar({
         googleCalendarApiKey: 'AIzaSyDEbFn8eSO-K5iIv3LerSaHyonOC7plNcE',
@@ -863,4 +931,39 @@ $(document).ready(function(){
             return $("<li>").append("<a>" + item.label + "<br>" + item.desc + " " + item.instructor + "</a>").appendTo(ul);
         };
     });
+
+
+    // Testing
+    /*
+    $.get("/all_terms", function(all_terms_text){
+        all_terms = JSON.parse(all_terms_text);
+
+        // Testing Terms
+        top_term_ids = [4610, 4600]
+
+        for (var i = 0; i < top_term_ids.length; i++){
+            term_id = top_term_ids[i];
+            $.get("/all_subjects/" + term_id, function(all_subjects_text){
+                all_subjects = JSON.parse(all_subjects_text);
+            });
+
+            $.get("/all_courses/" + term_id, function(all_courses_text){
+                all_courses= JSON.parse(all_courses_text);
+            });
+
+            $.get("/all_sections/" + term_id, function(all_sections_text){
+                all_sections = JSON.parse(all_sections_text);
+            });
+
+            $.get("/all_components/" + term_id, function(all_components_text){
+                all_components = JSON.parse(all_components_text);
+            });
+
+            $.get("/all_descriptions/" + term_id, function(all_descriptions_text){
+                all_descriptions = JSON.parse(all_descriptions_text);
+            });
+        }
+    });
+    */
+
 });

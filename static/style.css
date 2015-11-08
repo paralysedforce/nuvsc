@@ -77,7 +77,7 @@ ul {
 }
 
 @media (min-width: 768px){
-    #tab_content {
+    #browse_tab {
         overflow-y: scroll;
         height: 650px;
     }
