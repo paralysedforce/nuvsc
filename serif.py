@@ -1,3 +1,5 @@
+#!usr/bin/python
+
 import os
 from flask import Flask, render_template
 from flask.ext.sqlalchemy import SQLAlchemy
@@ -9,29 +11,14 @@ from nuapiclient import NorthwesternAPIClient
 
 
 def convertDaysToDOW(section_str):
-    if section_str == None:
-        return []
-    days = [section_str[x:x + 2] for x in range(0, 
-        len(section_str), 2)]
-    dow_list = []
-    for day in days:
-        if day == 'Mo': dow_list.append(1)
-        elif day == 'Tu': dow_list.append(2)
-        elif day == 'We': dow_list.append(3)
-        elif day == 'Th': dow_list.append(4)
-        elif day == 'Fr': dow_list.append(5)
-    return dow_list
+    days = [section_str[x:x + 2] for x in xrange(0, len(section_str), 2)]
+    day_keys = {'Mo': 1, 'Tu': 2, 'We': 3, 'Th': 4, 'Fr': 5}
+    return [day_keys[day] for day in days]
     
 def convertDOWToDays(dow):
-    meeting_str = ""
-    meeting_days = dow[1:len(dow) - 1].split(",")
-    for day in meeting_days:
-        if day == '1' or day == ' 1': meeting_str += "M"
-        elif day == '2' or day == ' 2': meeting_str += "Tu"
-        elif day == '3' or day == ' 3': meeting_str += "W"
-        elif day == '4' or day == ' 4': meeting_str += "Th"
-        elif day == '5' or day == ' 5': meeting_str += "F"
-    return meeting_str
+    meeting_days = dow[1:-1].split(", ") 
+    day_keys = {'1':'M', '2': 'Tu', '3': 'W', '4': 'Th', '5': 'F'}
+    return "".join(day_keys[day] for day in meeting_days)
 
 
 app = Flask(__name__)
